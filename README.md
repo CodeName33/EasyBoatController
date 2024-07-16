@@ -18,7 +18,7 @@ What to buy:
  - Round guide 8mm 500mm (2pc)
  - Rigid coupling 5x8
  - Nut for screw TR8 pitch 2mm, stroke 8mm
-![alt text](6904685659.jog "Image")
+![Alt text](./images/6904685659.webp?raw=true "Image")
 
  - Trapezoidal screw TR8x8 500mm
 ![Alt text](./images/6904717827.webp?raw=true "Image")

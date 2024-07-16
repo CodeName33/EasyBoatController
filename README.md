@@ -76,14 +76,23 @@ Install EasyBoatController as desktop application. Now you hawe app installed (i
 # Using Both parts
 
 Power on hardware part (it has no buttons and indicators, just need to supply 12v power)
+
 Press "Connect Bluetooth" button in EasyBoatController application. If all soldered right and worked you can see device named "EasyBoatController", connect to it.
+
 Press "Calibrate" button and press "Run auto zero calibration" button. This will move caret to end and after some time to middle. 
+
 Set the steering tiller level to zero and put tiller steering into tiller steering lock and lock it.
+
 Now you can hold hardware device on boat. If you are using magic arms - fix device in current position.
+
 You can test device using "Start Accel Drive" button. It will move the rudder when you when you tilt your phone (like in phone games).
+
 For now this allication can't show maps but it can import route in KML or GPX format. You can make your own route in Navionics Boating or  this service for example (https://www.gpsvisualizer.com/draw/) and export GPX file.
+
 In EasyBoatController application press "Route Management..." and next press "Import..." and open your GPX or KML file. You can save/load this route in application now.
+
 Now you can start your engine wit preferred speed and press button "Start Navigation". 
+
 IMPORTANT NOTE: You can't turn your screen off or switch to another application while navigating, web-apps can't work in backgroung in android (Yes, ServiceWorkers, but no BLE for them). May be you want to rewrite my js code and make apk that can work in background, I don't want it now ;) I made special button called "Black Screen" it fills screen in black with some gray text on it. This can save battery for devices with OLED displays.
 
 

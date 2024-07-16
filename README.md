@@ -1,9 +1,9 @@
-About
+# About
 
 This is simple boat/yacht autopilot application (outboard motor only, not for sails). It uses android phone as main device and special diy hardware to move boat rudder.
 
 
-How to build hardware device
+# How to build hardware device
 
 You need to buy some parts and print plastic parts with 3D Printer.
 
@@ -12,12 +12,15 @@ What to buy:
 
  - Nema 17 Stepper motor (17HS4401) (With cable)
  - Driver A4988
+
 ![Alt text](./images/6918110198.webp?raw=true "Image")
 
  - Extension board for A4988
+
 ![Alt text](./images/6149784476.webp?raw=true "Image")
 
  - Flange support bearing KFL08 8mm (2pc)
+
  ![Alt text](./images/6206280561.webp?raw=true "Image")
  
  - Linear bearing LM8UU (2pc)
@@ -25,14 +28,17 @@ What to buy:
 
 
  - Rigid coupling 5x8
+
 ![Alt text](./images/6341319996.webp?raw=true "Image")
 
  - Nut for screw TR8 pitch 2mm, stroke 8mm
+
 ![Alt text](./images/6904685659.webp?raw=true "Image")
 
  - Trapezoidal screw TR8x8 500mm
+
 ![Alt text](./images/6904717827.webp?raw=true "Image")
- - 12v to 5v buck module
+ - 12v to 5v buck module (Any)
  - 12v accumulator
 
 Print all parts from Hardware/all-parts file. There are OpenSCAD source too, so you can change any parameters.
@@ -58,7 +64,7 @@ OUT- (12v to 5v buck module) = GND (ESP32)
 
 Use 2 fusion nut in holes at bottom of device (yes there are bottom and holes at bottom side). I've used 1/4 nut like in cameras and can use magic arms to hold device on boat.
 
-Using Software
+# Using Software
 
 There are two ways:
 1. Your own hosting for web-app (put manifest.json, index.htm and icon.png to your host)
@@ -67,7 +73,7 @@ There are two ways:
 Using chrome on your mobile device on notebook goto http://codename33.ru/apps/ebc/ (or your own url).
 Install EasyBoatController as desktop application. Now you hawe app installed (it will work even without internet after first run).
 
-Using Both parts
+# Using Both parts
 
 Power on hardware part (it has no buttons and indicators, just need to supply 12v power)
 Press "Connect Bluetooth" button in EasyBoatController application. If all soldered right and worked you can see device named "EasyBoatController", connect to it.
@@ -81,7 +87,7 @@ Now you can start your engine wit preferred speed and press button "Start Naviga
 IMPORTANT NOTE: You can't turn your screen off or switch to another application while navigating, web-apps can't work in backgroung in android (Yes, ServiceWorkers, but no BLE for them). May be you want to rewrite my js code and make apk that can work in background, I don't want it now ;) I made special button called "Black Screen" it fills screen in black with some gray text on it. This can save battery for devices with OLED displays.
 
 
-Application Settings Description
+# Application Settings Description
 
 Course - settings for navigation
 	Maximum Rudder Position Percent - zone in which rudder can move (100% - full)

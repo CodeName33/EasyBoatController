@@ -89,7 +89,7 @@ There are two ways:
 
 Using chrome on your mobile device on notebook goto http://codename33.ru/apps/ebc/ (or your own url).
 
-Install EasyBoatController as desktop application. Now you hawe app installed (it will work even without internet after first run).
+Install EasyBoatController as desktop application. Now you have app installed (it will work even without internet after first run).
 
 # Using Both parts
 
@@ -111,7 +111,7 @@ In EasyBoatController application press "Route Management..." and next press "Im
 
 Now you can start your engine wit preferred speed and press button "Start Navigation". 
 
-**IMPORTANT NOTE**: You can't turn your screen off or switch to another application while navigating, web-apps can't work in backgroung in android (Yes, ServiceWorkers, but no BLE for them). May be you want to rewrite my js code and make apk that can work in background, I don't want it now ;) I made special button called "Black Screen" it fills screen in black with some gray text on it. This can save battery for devices with OLED displays.
+**IMPORTANT NOTE**: You can't turn your screen off or switch to another application while navigating, web-apps can't work in background on android (Yes, ServiceWorkers, but no BLE for them). May be you want to rewrite my js code and make apk that can work in background, I don't want it now ;) I made special button called "Black Screen" it fills screen in black with some gray text on it. This can save battery for devices with OLED displays.
 
 
 # Application Settings Description

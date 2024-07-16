@@ -40,6 +40,11 @@ What to buy:
 ![Alt text](./images/6904717827.webp?raw=true "Image")
  - 12v to 5v buck module (Any)
  - 12v accumulator
+ - Bolts M3x10mm-12mm (4pcs), M3x16mm (4pcs)
+ - Bolts M4x15mm (12pcs)
+ - Bolts M5x30mm (2pcs), M5x25mm (1pc), M5x50mm (6pcs), M5x10mm (2pcs), M5x60mm (1pc)
+ - Nuts M4 (12pcs)
+ - Nuts M5 (12pcs)
 
 Print all parts from Hardware/all-parts file. There are OpenSCAD source too, so you can change any parameters.
 

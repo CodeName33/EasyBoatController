@@ -130,14 +130,14 @@ Now you can start your engine wit preferred speed and press button "Start Naviga
  - **Keep Boat Near Line Q** - This value makes alutopilot try to move boat to line faster. Too high value can make boat make zigzags over line. 1.5 - 3.0 recommended.
  - **Keep Boat Near Line Max Percent** - very similar to "Keep Boat Near Line Q" option but in percents
 
-**Points** - points options
- - **Distance To Point To Be Done** - works only when "Taking Points Not Necessary" unckecked. Distance in meters.
+ - **Points** - points options
+     - **Distance To Point To Be Done** - works only when "Taking Points Not Necessary" unckecked. Distance in meters.
 
-**Speed Compensation For Slow Rudder** - this algorythm use boat speed to limit rudder move zone (like "Maximum Rudder Position Percent" option). On high speed boat with slow rudder move speed it can help to navigate better.
- - **Enabled** - turns on or off this algorythm
- - **Compensate After Speed Kmh** - compensation will start after this speed (in km/h).
- - **Compensate Min Q** - minimum rudder zone (0.1 = 10% etc)
- - **Angle To Point Dont Compensate After** - Turn off compensation when difference between boat angle and cource angle more then this value,
+ - **Speed Compensation For Slow Rudder** - this algorythm use boat speed to limit rudder move zone (like "Maximum Rudder Position Percent" option). On high speed boat with slow rudder move speed it can help to navigate better.
+     - **Enabled** - turns on or off this algorythm
+     - **Compensate After Speed Kmh** - compensation will start after this speed (in km/h).
+     - **Compensate Min Q** - minimum rudder zone (0.1 = 10% etc)
+     - **Angle To Point Dont Compensate After** - Turn off compensation when difference between boat angle and cource angle more then this value,
 **Gps** - GPS  options
  - **Use Compass Between Gps Steps** - it can increase cource accuracy, but you don't need to move youyr phone while navigating.
  - **Meters To Move** - GPS position must be changed to value more then in this option to calculate boat course. This option can help avoid course jumping cause of gps random inaccuracy
@@ -155,20 +155,13 @@ Now you can start your engine wit preferred speed and press button "Start Naviga
  - **Wind** - Wind in emulation
      - **Angle** - wind angle
      - **Force** - wind force. 0 - off, value - wind speed, but not in km/h in GPS distances (something like 0.00001)
-
-## Offsets
-
-Rudder Rotate - static boat rotation (0 - off)
-
-## Boat - Boat options
-
-Speed - boat speed,but not in km/h in GPS distances (something like 0.00002)
-
-Rudder Speed - speed of rudder movements
-
-Delay Seconds - delay for coordinates (GPS emulation) in seconds
-  
-## AccelDrive - Accelerometer Drive Options
-
-Min Angle To Move - minimum angle changes to accept. This can avoid many garbage changes.
+ - **Offsets**
+     - **Rudder Rotate** - static boat rotation (0 - off)
+ - **Boat** - Boat options
+     - **Speed** - boat speed,but not in km/h in GPS distances (something like 0.00002)
+     - **Rudder Speed** - speed of rudder movements
+     - **Delay Seconds** - delay for coordinates (GPS emulation) in seconds
+     - 
+**AccelDrive** - Accelerometer Drive Options
+ - **Min Angle To Move** - minimum angle changes to accept. This can avoid many garbage changes.
  

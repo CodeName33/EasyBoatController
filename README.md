@@ -161,7 +161,7 @@ Now you can start your engine wit preferred speed and press button "Start Naviga
      - **Speed** - boat speed,but not in km/h in GPS distances (something like 0.00002)
      - **Rudder Speed** - speed of rudder movements
      - **Delay Seconds** - delay for coordinates (GPS emulation) in seconds
-     - 
+
 **AccelDrive** - Accelerometer Drive Options
  - **Min Angle To Move** - minimum angle changes to accept. This can avoid many garbage changes.
  

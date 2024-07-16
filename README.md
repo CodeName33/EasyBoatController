@@ -12,11 +12,21 @@ What to buy:
 
  - Nema 17 Stepper motor (17HS4401) (With cable)
  - Driver A4988
+![Alt text](./images/6918110198.webp?raw=true "Image")
+
  - Extension board for A4988
+![Alt text](./images/6149784476.webp?raw=true "Image")
+
  - Flange support bearing KFL08 8mm (2pc)
+ ![Alt text](./images/6206280561.webp?raw=true "Image")
+ 
  - Linear bearing LM8UU (2pc)
  - Round guide 8mm 500mm (2pc)
+
+
  - Rigid coupling 5x8
+![Alt text](./images/6341319996.webp?raw=true "Image")
+
  - Nut for screw TR8 pitch 2mm, stroke 8mm
 ![Alt text](./images/6904685659.webp?raw=true "Image")
 

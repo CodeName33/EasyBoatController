@@ -152,12 +152,9 @@ Now you can start your engine wit preferred speed and press button "Start Naviga
 
 **Emulation** - emulation options
  - **Enabled** - turn on/off emulation mode
-
- -- **Wind** - Wind in emulation
-
-Angle - wind angle
-
-Force - wind force. 0 - off, value - wind speed, but not in km/h in GPS distances (something like 0.00001)
+ - **Wind** - Wind in emulation
+     - **Angle** - wind angle
+     - **Force** - wind force. 0 - off, value - wind speed, but not in km/h in GPS distances (something like 0.00001)
 
 ## Offsets
 

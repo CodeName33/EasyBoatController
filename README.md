@@ -74,6 +74,8 @@ OUT- (12v to 5v buck module) = GND (ESP32)
 Assembled device:
 ![Alt text](./images/device.webp?raw=true "Image")
 
+![Alt text](./images/assembly-info.webp?raw=true "Image")
+
 Use 2 fusion nut in holes at bottom of device (yes there are bottom and holes at bottom side). I've used 1/4 nut like in cameras and can use magic arms to hold device on boat.
 
 ![Alt text](./images/nuts.webp?raw=true "Image")

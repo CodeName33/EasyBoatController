@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>EBC</title>
+        <meta charset="utf-8">
+		<meta name="viewport" content="width =device-width, user-scalable=no, initial-scale=1.0">
+		<meta name="mobile-web-app-capable" content="yes">
+    	<meta name="apple-mobile-web-app-capable" content="yes">
+    	<meta http-equiv="X-UA-Compatible" content="IE =11" />
+		<link rel="icon" type="image/png" href="icon.png">
+    	<link rel="manifest" href="manifest.json">
+        <link href="styles.css" rel="stylesheet" />
+        <!--<script src="jszip.min.js"></script> -->
+    </head>
+    <body>
+        <div class="sidebar" id="sidebar">
+            <div id="status" class="status"></div>
+			<div id="debug" class="status"></div>
+        </div>
+        <div id="screenspace" class="screenspace"></div>
+        <div style="display:none;">
+            <img id="boat" src="boat.png" />
+        </div>
+        <div id="black_cover" class="black-cover hidden">
+            <div class="button" onclick="hideBlackCover();">Back</div>
+            <table>
+                <tr><td>Points Left</td><td id="bc_pointsLeft"></td></tr>
+                <tr><td>Distance to point</td><td id="bc_distance"></td></tr>
+                <tr><td>Total Distance</td><td id="bc_distanceTotal"></td></tr>
+            </table>
+        </div>
+        <script src="common.js"></script>
+        <script src="math.js"></script>
+		<script src="sidebar.js"></script>
+		<script src="bluetooth.js"></script>
+        <script src="engine.js"></script>
+        <script src="drive.js"></script>
+        <script src="calibrate.js"></script>
+        <script src="import.js"></script>
+        <script src="display.js"></script>
+		<script src="settings.js"></script>
+        <script src="emulator.js"></script>
+		<script src="sensors.js"></script>
+        
+        <!---->
+		
+        <script>
+            function hideBlackCover() {
+                switchClass(document.getElementById("black_cover"), "hidden", true);
+            }
+
+            function showBlackCover() {
+                switchClass(document.getElementById("black_cover"), "hidden", false);
+            }
+
+            function initServiceWorker() {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('./service-worker.js')
+                    .then((registration) => {
+                        if (registration.waiting) {
+                            // Trigger force update if there's a waiting service worker
+                            registration.waiting.postMessage({ action: 'skipWaiting' });
+                        }
+
+                        registration.onupdatefound = () => {
+                            const installingWorker = registration.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        // New update available
+                                        console.log('New or updated content is available.');
+                                    } else {
+                                        // First installation
+                                        console.log('Content is cached for offline use.');
+                                    }
+                                }
+                            };
+                        };
+
+
+                        console.log('ServiceWorker registration successful with scope: ' + registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('ServiceWorker registration failed: ' + error);
+                    });
+                }
+            }
+
+            function initApp() {
+                initServiceWorker();
+				initBluetooth();
+                addSidebarButton("Black Screen", showBlackCover);
+                scrollToBoat();
+                setTimeout(onTime, 50);
+            }
+
+            function onTime() {
+				onBluetoothTime();
+                sensorsOnTime();
+                if (settings.emulation.enabled) {
+                    emulatorOnTime();
+                } else {
+                    engineOnTime();
+                }
+                accelDriveOnTime();
+				calibrationOnTime();
+                render();
+                setTimeout(onTime, 50);
+            }
+
+            window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+                alert("Error: " + errorMsg + "\nURL: " + url + "\nLine: " + lineNumber);
+                return false;
+            };
+
+            initApp();
+        </script>
+    </body>
+</html>

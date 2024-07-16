@@ -1,0 +1,334 @@
+:root {
+    --background-color: #000;
+    --black-cover-text-color: #444;
+    --text-color: #F2F2F2;
+    --link-text-color: #2B76D9;
+    --frame-text-color: #260F0F;
+    --sidebar-size: 16em;
+    --sidebar-success-background-color: #204600;
+    --sidebar-error-background-color: #460000;
+    --sidebar-edit-background-color: #003346;
+    --sidebar-background-color: #004761;
+    --sidebar-button-background-color: #005f81;
+	--map-background: #222;
+}
+
+@font-face {
+	font-family: "main";
+	src: url(roboto.woff);
+}
+
+body, div, td, th, input, textarea, button {
+    font-family: main;
+    font-size: 14px;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    max-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.black-cover {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 1);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5em;
+    z-index: 200;
+}
+
+.black-cover .button {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+    border: solid 0.1em var(--black-cover-text-color);
+    color: var(--black-cover-text-color);
+    padding: 0.5em;
+}
+
+.black-cover table {
+    border-collapse: collapse;
+    border: solid 0.1em var(--black-cover-text-color);
+}
+.black-cover table td:nth-child(1) {
+    min-width: 16em;
+    
+}
+.black-cover table td {
+    color: var(--black-cover-text-color);
+    border: solid 0.1em var(--black-cover-text-color);
+}
+
+
+.modal-area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-window {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.5em;
+    border-radius: 1em;
+    background-color: var(--sidebar-background-color);
+}
+
+
+.modal-window .buttons {
+    display: flex;
+    gap: 0.5em;
+    justify-content: flex-end;
+}
+
+.modal-window .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: solid 0.1em var(--sidebar-button-background-color);
+    margin-bottom: 0.5em;
+}
+
+.modal-window .area {
+    max-height: calc(90vh - 5em);
+    overflow-y: scroll;
+    padding-right: 0.2em;
+}
+
+.modal-window .buttons .button {
+    margin-top: 0.5em;
+    background-color: var(--sidebar-button-background-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em 0.6em;
+    border-radius: 0.5em;
+}
+
+.modal-window .settings-label {
+    flex-grow: 1;
+}
+
+.modal-window .settings-button {
+	background-color: var(--sidebar-button-background-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em 0.3em;
+	min-width: 5em;
+}
+
+.modal-window .settings-prop-area {
+    display: flex;
+    align-items: center;
+	padding-bottom: 0.2em;
+    gap: 0.3em;
+}
+
+.modal-window .settings-group {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    border-bottom: solid 0.1em var(--sidebar-button-background-color);
+}
+
+.modal-window .settings-view  {
+    background-color: var(--sidebar-edit-background-color);
+    border: solid 0.1em var(--sidebar-button-background-color);
+    padding: 0.2em;
+    min-width: 7em;
+    text-align: right;
+	max-width: 6em;
+}
+
+.modal-window .settings-table th {
+	background-color: var(--sidebar-edit-background-color);
+	padding: 0.2em 0.4em;
+}
+
+.modal-window .settings-table td {
+	background-color: var(--sidebar-background-color);
+}
+
+.modal-window .settings-table tr:nth-child(odd) td {
+	filter: brightness(0.8);
+}
+
+.modal-window .settings-edit-mini {
+    max-width: 5em;
+}
+
+.modal-window .settings-edit {
+    max-width: 6em;
+}
+
+.screen {
+    background-color: var(--map-background);
+}
+
+.status {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    gap: 0.1em;
+}
+
+.status .property {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: center;
+    gap: 0.2em;
+}
+
+.status .property .label {
+    font-size: 0.9em;
+    flex-grow: 1;
+}
+
+.status .property .value {
+    background-color: var(--sidebar-edit-background-color);
+    border: solid 0.1em var(--sidebar-button-background-color);
+    padding: 0.1em;
+    min-width: 7em;
+    text-align: right;
+}
+
+.status .property .success {
+    background-color: var(--sidebar-success-background-color) !important;
+}
+
+.status .property .error {
+    background-color: var(--sidebar-error-background-color) !important;
+}
+
+.screenspace {
+    background-color: var(--background-color);
+    flex-grow: 1;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar, .modal-window .area {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+.sidebar::-webkit-scrollbar, .modal-window .area::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
+
+.sidebar {
+    align-self: stretch;
+    background-color: var(--sidebar-background-color);
+    min-width: var(--sidebar-size);
+    width: var(--sidebar-size);
+    max-width: var(--sidebar-size);
+    padding: 0.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+	gap: 0.3em;
+    max-height: 100vh;
+    overflow-y: scroll;
+}
+
+.sidebar .status {
+    flex-grow: 1;
+}
+
+.sidebar .button {
+    background-color: var(--sidebar-button-background-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em 0.3em;
+}
+
+.sidebar .green {
+    background-color: var(--sidebar-success-background-color) !important;
+}
+
+.sidebar .red {
+    background-color: var(--sidebar-error-background-color) !important;
+}
+
+.button {
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+			user-select: none;
+}
+
+.disabled {
+    filter: brightness(0.4) !important;
+}
+
+.button:hover, tr.button > td:hover {
+    filter: brightness(1.1);
+}
+
+.button:active {
+    filter: brightness(0.6);
+}
+
+@media (hover: none) and (pointer: coarse),(hover: none) and (pointer: fine) {
+    body, input, textarea, th, td, div, button {
+        font-size: 4vmin;
+    }
+    .button {
+        padding-top: 0.5em !important;
+        padding-bottom: 0.5em !important;
+    }
+    .settings-edit {
+        padding-top: 0.3em !important;
+        padding-bottom: 0.3em !important;
+    }
+    @media (orientation: portrait) {
+        body {
+            flex-direction: column-reverse;
+            max-width: 100vw;
+            align-items: stretch;
+            justify-content: stretch;
+        }
+        .sidebar {
+            max-height: 60vh;
+            height: 60vh;
+
+            min-width: auto;
+            width: auto;
+            max-width: 100vw;
+        }
+    }
+}

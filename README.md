@@ -123,56 +123,37 @@ Now you can start your engine wit preferred speed and press button "Start Naviga
 
 # Application Settings Description
 
-## Course - settings for navigation
+**Course** - settings for navigation
+ - **Maximum Rudder Position Percent** - zone in which rudder can move (100% - full)
+ - **Keep Boat Near Lines** - In navigation mode this chack will force autopilot to move boat near lines between course points
+ - **Taking Points Not Necessary** - If checked this means that boat don't need to move near points, to got it. It unchecked "Points - Distance To Point To Be Done" option works
+ - **Keep Boat Near Line Q** - This value makes alutopilot try to move boat to line faster. Too high value can make boat make zigzags over line. 1.5 - 3.0 recommended.
+ - **Keep Boat Near Line Max Percent** - very similar to "Keep Boat Near Line Q" option but in percents
 
-Maximum Rudder Position Percent - zone in which rudder can move (100% - full)
+**Points** - points options
+ - **Distance To Point To Be Done** - works only when "Taking Points Not Necessary" unckecked. Distance in meters.
 
-Keep Boat Near Lines - In navigation mode this chack will force autopilot to move boat near lines between course points
-
-Taking Points Not Necessary - If checked this means that boat don't need to move near points, to got it. It unchecked "Points - Distance To Point To Be Done" option works
-
-Keep Boat Near Line Q - This value makes alutopilot try to move boat to line faster. Too high value can make boat make zigzags over line. 1.5 - 3.0 recommended.
-
-Keep Boat Near Line Max Percent - very similar to "Keep Boat Near Line Q" option but in percents
-
-## Points - points options
-
-Distance To Point To Be Done - works only when "Taking Points Not Necessary" unckecked. Distance in meters.
-
-## Speed Compensation For Slow Rudder - this algorythm use boat speed to limit rudder move zone (like "Maximum Rudder Position Percent" option). On high speed boat with slow rudder move speed it can help to navigate better.
+**Speed Compensation For Slow Rudder** - this algorythm use boat speed to limit rudder move zone (like "Maximum Rudder Position Percent" option). On high speed boat with slow rudder move speed it can help to navigate better.
+ - **Enabled** - turns on or off this algorythm
+ - **Compensate After Speed Kmh** - compensation will start after this speed (in km/h).
+ - **Compensate Min Q** - minimum rudder zone (0.1 = 10% etc)
+ - **Angle To Point Dont Compensate After** - Turn off compensation when difference between boat angle and cource angle more then this value,
+**Gps** - GPS  options
+ - **Use Compass Between Gps Steps** - it can increase cource accuracy, but you don't need to move youyr phone while navigating.
+ - **Meters To Move** - GPS position must be changed to value more then in this option to calculate boat course. This option can help avoid course jumping cause of gps random inaccuracy
+ - **Points To Group** - Algorythm takes averages GPS coordinates from count of this points. Also can help avoid course jumping cause of gps random inaccuracy
+ - **Accuracy** - Algorythm round up GPS coordinates to this number of decimal places
  
-Enabled - turns on or off this algorythm
+**Calibrate** - calibration options
+ - **Max Steps** - max steps (from left to right position). If you use 500mm trapezoidal screw and round guides leave default
+ - **Auto Calibration Center** - steps from side to center. If you use 500mm trapezoidal screw and round guides leave default
+ - **Default Side Max** - default values for side to center that will be set after "Run auto zero calibration" button
+ - **Inverted Move** - inversion for rudder
 
-Compensate After Speed Kmh - compensation will start after this speed (in km/h).
+**Emulation** - emulation options
+ - **Enabled** - turn on/off emulation mode
 
-Compensate Min Q - minimum rudder zone (0.1 = 10% etc)
-
-Angle To Point Dont Compensate After - Turn off compensation when difference between boat angle and cource angle more then this value,
-## Gps - GPS  options
-
-Use Compass Between Gps Steps - it can increase cource accuracy, but you don't need to move youyr phone while navigating.
-
-Meters To Move - GPS position must be changed to value more then in this option to calculate boat course. This option can help avoid course jumping cause of gps random inaccuracy
-
-Points To Group - Algorythm takes averages GPS coordinates from count of this points. Also can help avoid course jumping cause of gps random inaccuracy
-
-Accuracy - Algorythm round up GPS coordinates to this number of decimal places
- 
-## Calibrate - calibration options
-
-Max Steps - max steps (from left to right position). If you use 500mm trapezoidal screw and round guides leave default
-
-Auto Calibration Center - steps from side to center. If you use 500mm trapezoidal screw and round guides leave default
-
-Default Side Max - default values for side to center that will be set after "Run auto zero calibration" button
-
-Inverted Move - inversion for rudder
- 
-## Emulation - emulation options
-
-Enabled - turn on/off emulation mode
-
-## Wind - Wind in emulation
+ -- **Wind** - Wind in emulation
 
 Angle - wind angle
 

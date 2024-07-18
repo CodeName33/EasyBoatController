@@ -140,9 +140,8 @@ Now you can start your engine wit preferred speed and press button "Start Naviga
      - **Angle To Point Dont Compensate After** - Turn off compensation when difference between boat angle and cource angle more then this value,
 **Gps** - GPS  options
  - **Use Compass Between Gps Steps** - it can increase cource accuracy, but you don't need to move youyr phone while navigating.
- - **Meters To Move** - GPS position must be changed to value more then in this option to calculate boat course. This option can help avoid course jumping cause of gps random inaccuracy
+ - **Meters To Move** - GPS position must be changed to value more then in this option to calculate boat course. This option can help avoid course jumping cause of gps random inaccuracy (removed by default (0) in last version)
  - **Points To Group** - Algorythm takes averages GPS coordinates from count of this points. Also can help avoid course jumping cause of gps random inaccuracy
- - **Accuracy** - Algorythm round up GPS coordinates to this number of decimal places
  
 **Calibrate** - calibration options
  - **Max Steps** - max steps (from left to right position). If you use 500mm trapezoidal screw and round guides leave default

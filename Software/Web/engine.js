@@ -1,7 +1,9 @@
 var boat = { 
     inited: false, 
     x: 600, 
-    y: 350, 
+    y: 350,
+    angleX: 600,
+    angleY: 350,
     a: 0, 
     rudder: { 
         pos: 0, 
@@ -23,17 +25,28 @@ var route = {
 var engineStarted = false;
 
 function engineOnTime() {
+	if (sensors.orientation.active) {
+		reportStatus("orientation", "Compass", Math.floor(sensors.orientation.degrees));
+	}
+	
     if (sensors.gps.active) {
         reportStatus("gpsLat", "Latitude", sensors.gps.latitude, false);
         reportStatus("gpsLon", "Longitude", sensors.gps.longitude, false);
         reportStatus("gpsSpeed", "Speed", Math.floor(sensors.gps.detectedSpeed) + " km/h", false);
 
-        if (!boat.inited || boat.x != sensors.gps.longitude || boat.y != sensors.gps.latitude) {
+        if (!boat.inited 
+            || boat.x != sensors.gps.lastest.longitude || boat.y != sensors.gps.lastest.latitude
+            || boat.angleX != sensors.gps.longitude || boat.angleY != sensors.gps.latitude
+        ) {
             
-            boat.a = coordsToAngle(boat.x, boat.y, sensors.gps.longitude, sensors.gps.latitude);
-            boat.realA = boat.a;
-            boat.x = sensors.gps.longitude;
-            boat.y = sensors.gps.latitude;
+            if (boat.angleX != sensors.gps.longitude || boat.angleY != sensors.gps.latitude) {
+                boat.a = coordsToAngle(boat.angleX, boat.angleY, sensors.gps.longitude, sensors.gps.latitude);
+                boat.realA = boat.a;
+                boat.angleX = sensors.gps.longitude;
+                boat.angleY = sensors.gps.latitude;
+            }
+            boat.x = sensors.gps.lastest.longitude;
+            boat.y = sensors.gps.lastest.latitude;
 
             if (!boat.inited) {
                 scrollToBoat();

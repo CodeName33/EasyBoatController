@@ -49,14 +49,61 @@ function importGPX(fileData) {
 	}
 	var rtepts = doc.querySelectorAll("rtept");
 	for (let rtept of rtepts) {
-		route.points.push({ x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) });
+		var point = { x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) };
+		if (route.points.length == 0 || route.points[route.points.length - 1].x != point.x || route.points[route.points.length - 1].y != point.y)
+		{
+			route.points.push(point);
+		}
 	}
 
-	rtepts = doc.querySelectorAll("trkpt");
-	for (let rtept of rtepts) {
-		route.points.push({ x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) });
+	//*
+	trkpts = doc.querySelectorAll("trkpt");
+	for (let rtept of trkpts) {
+		var point = { x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) };
+		if (route.points.length == 0 || route.points[route.points.length - 1].x != point.x || route.points[route.points.length - 1].y != point.y)
+		{
+			route.points.push(point);
+		}
 	}
+	//*/
 
+	/*
+	var points = [];
+	debugCollectedRoute = [];
+	trkpt = doc.querySelectorAll("trkpt");
+	for (let rtept of trkpt) {
+		var point = { x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) };
+		debugCollectedRoute.push({
+			latitude: parseFloat(rtept.getAttribute("lat")),
+			longitude: parseFloat(rtept.getAttribute("lon")),
+			compass: parseFloat(rtept.getAttribute("cmp")),
+			time: parseInt(rtept.getAttribute("tm")),
+		});
+		if (points.length == 0 || points[points.length - 1].x != point.x || points[points.length - 1].y != point.y)
+		{
+			points.push(point);
+			route.points.push(point);
+			
+			if (points.length > settings.gps.pointsToGroup) {
+
+				var crdAvg = {
+					x: 0,
+					y: 0,
+				};
+				for (let c of points) {
+					crdAvg.x += c.x;
+					crdAvg.y += c.y;
+				}
+				crdAvg.x /= points.length;
+				crdAvg.y /= points.length;
+				points.shift();
+
+				//route.points.push(crdAvg);
+			}
+		}
+	}
+	//*/
+	
 	finishImport();
 }
 

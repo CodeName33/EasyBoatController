@@ -17,9 +17,9 @@ var settings = {
     },
     gps: {
         useCompassBetweenGpsSteps: false,
-        metersToMove: 3,
+        metersToMove: 0,
         pointsToGroup: 3,
-        accuracy: 6,
+        //accuracy: 5,
     },
 	calibrate: {
 		maxSteps: 210,
@@ -29,6 +29,7 @@ var settings = {
 	},
     emulation: {
         enabled: true,
+		debug: false,
         wind: {
             angle: 0,
             force: 0,
@@ -254,3 +255,132 @@ if (settingsString != undefined && settingsString != null && settingsString.leng
 }
 
 addSidebarButton("Settings...", editSettings);
+
+
+
+
+
+
+
+
+
+var debugCollectedRouteIndex = 0;
+var debugCollectedRoute = [];
+var playingInProgress = false;
+var playStartTime = null;
+var collectionInProgress = false;
+var debugCollected = [];
+var debugCollectTime = null;
+var debugCollectStartTime = null;
+function debugOnTime() {
+	if (collectionInProgress) {
+		var elapsed = (new Date().getTime() - debugCollectTime.getTime());
+		if (elapsed > 200) {
+			var t = (new Date().getTime() - debugCollectStartTime.getTime());
+			debugCollected.push({
+				time: t,
+				longitude: sensors.gps.lastest.longitude,
+				latitude: sensors.gps.lastest.latitude,
+				compass: sensors.orientation.degrees,
+			});
+			debugCollectTime = new Date();
+			document.getElementById("collected_records").innerText = debugCollected.length;
+		}
+	}
+
+    if (playingInProgress) {
+        var diff = (new Date().getTime() - playStartTime.getTime()) / 2;
+        if (debugCollectedRouteIndex < debugCollectedRoute.length && diff > debugCollectedRoute[debugCollectedRouteIndex].time) {
+            sensors.orientation.active = true;
+            sensors.orientation.degrees = debugCollectedRoute[debugCollectedRouteIndex].compass;
+
+            if (debugCollectedRouteIndex ==0 
+                || debugCollectedRoute[debugCollectedRouteIndex].longitude != debugCollectedRoute[debugCollectedRouteIndex - 1].longitude
+                || debugCollectedRoute[debugCollectedRouteIndex].latitude != debugCollectedRoute[debugCollectedRouteIndex - 1].latitude
+            )
+            {
+                gpsSuccess({
+                    coords: {
+                        speed: 0,
+                        altitude: 0,
+                        longitude: debugCollectedRoute[debugCollectedRouteIndex].longitude,
+                        latitude: debugCollectedRoute[debugCollectedRouteIndex].latitude,
+                    },
+                    debugInPlay: true,
+                });
+            }
+            debugCollectedRouteIndex++;
+            var status = document.getElementById("played_records");
+            if (status != null) {
+                status.innerText = debugCollectedRouteIndex + "/" + debugCollectedRoute.length;
+            }
+        }
+    }
+}
+
+function saveCollectedData() {
+	var xml = '<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"><trk><name></name><desc></desc><trkseg>';
+
+	for (let record of debugCollected) {
+		xml += '<trkpt lat="' + record.latitude + '" lon="' + record.longitude + '" cmp="' + record.compass + '" tm="' + record.time + '"></trkpt>';
+	}
+
+	xml += '</trkseg></trk></gpx>';
+	debugCollected = [];
+	downloadFileData("collected-data.gpx", xml, "application/octet-stream");
+}
+
+function switchCollectData() {
+	collectionInProgress = !collectionInProgress;
+	if (collectionInProgress) {
+		debugCollected = [];
+		debugCollectTime = new Date();
+		debugCollectStartTime = new Date();
+	} else {
+		saveCollectedData();
+	}
+	document.getElementById("collect_data").innerText = collectionInProgress ? "Stop" : "Start";
+}
+
+function playCollectedRecords() {
+    playStartTime = new Date();
+    playingInProgress = !playingInProgress;
+    if (playingInProgress) {
+        debugCollectedRouteIndex = 0;
+    }
+    document.getElementById("play_collected_records").innerText = playingInProgress ? "Stop" : "Start";
+}
+
+function showDebug() {
+	var window = createModalWindow("Debug", closeModalWindow, undefined, closeModalWindow);
+
+	createElement("div", { parent: window, text: "Data Collection", class: "settings-group" });
+	{
+		var area = createElement("div", { parent: window, class: "settings-prop-area"});
+		createElement("div", { parent: area, text: "Collected Records", class: "settings-label" });
+		createElement("div", { parent: area, id: "collected_records", class: "settings-view" });
+	}
+
+    {
+		var area = createElement("div", { parent: window, class: "settings-prop-area"});
+		createElement("div", { parent: area, text: "Collect Data", class: "settings-label" });
+		createElement("div", { parent: area, text: "Start", id: "collect_data", class: "settings-button button", onclick: switchCollectData });
+	}
+
+    createElement("div", { parent: window, text: "Play Collected Data", class: "settings-group" });
+    createElement("div", { parent: window, text: "Data Collection", class: "settings-group" });
+	{
+		var area = createElement("div", { parent: window, class: "settings-prop-area"});
+		createElement("div", { parent: area, text: "Records", class: "settings-label" });
+		createElement("div", { parent: area, id: "played_records", class: "settings-view", text: debugCollectedRoute.length });
+	}
+    {
+		var area = createElement("div", { parent: window, class: "settings-prop-area"});
+		createElement("div", { parent: area, text: "Playing Records", class: "settings-label" });
+		createElement("div", { parent: area, text: "Play", id: "play_collected_records", class: "settings-button button", onclick: playCollectedRecords });
+	}
+}
+
+if (settings.emulation.debug) {
+	addSidebarButton("Debug...", showDebug);
+}

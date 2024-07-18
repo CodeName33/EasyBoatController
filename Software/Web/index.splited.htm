@@ -102,6 +102,9 @@
                 } else {
                     engineOnTime();
                 }
+				if (settings.emulation.debug) {
+					debugOnTime();
+				}
                 accelDriveOnTime();
 				calibrationOnTime();
                 render();

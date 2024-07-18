@@ -118,7 +118,7 @@ function showCalibrationDialog() {
 	createElement("div", { parent: window, text: "Auto Calibrate", class: "settings-group" });
     {
 		var area = createElement("div", { parent: window, class: "settings-prop-area"});
-		createElement("div", { parent: area, text: "Run auto zero calibtation", class: "settings-label" });
+		createElement("div", { parent: area, text: "Run auto zero calibration", class: "settings-label" });
 		createElement("div", { parent: area, text: "Run", class: "settings-button button", onclick: calibrationAuto });
 	}
 

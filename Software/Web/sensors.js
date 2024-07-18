@@ -5,6 +5,10 @@ var sensors = {
 			latitude: 0,
 			longitude: 0,
 		},
+		lastest: {
+			latitude: 0,
+			longitude: 0,
+		},
 		active: false,
 		latitude: 0,
 		longitude: 0,
@@ -43,14 +47,24 @@ var gpsOptions = {
 };
 
 var gpsHistory = [];
-
+var gpsAccuracy = 8;
 
 function gpsSuccess(pos) {
 	const crd = pos.coords;
 
+	if (playingInProgress && !("debugInPlay" in pos)) {
+		return;
+	}
+
+	var latitude = crd.latitude == null ? 0 : crd.latitude;
+	var longitude = crd.longitude == null ? 0 : crd.longitude;
+
+	sensors.gps.lastest.latitude = latitude;
+	sensors.gps.lastest.longitude = longitude;
+
 	gpsHistory.push( {
-		latitude: crd.latitude == null ? 0 : crd.latitude,
-		longitude: crd.longitude,
+		latitude: latitude,
+		longitude: longitude,
 		altitude: crd.altitude,
 		speed: crd.speed == null ? 0 : crd.speed,
 		orientation: sensors.orientation.degrees,
@@ -70,34 +84,34 @@ function gpsSuccess(pos) {
 			crdAvg.latitude += c.latitude;
 			crdAvg.longitude += c.longitude;
 			crdAvg.speed += c.speed;
-			crdAvg.orientation += c.orientation;
 		}
 		crdAvg.altitude /= gpsHistory.length;
 		crdAvg.latitude /= gpsHistory.length;
 		crdAvg.longitude /= gpsHistory.length;
 		crdAvg.speed /= gpsHistory.length;
-		crdAvg.orientation /= gpsHistory.length;
+		crdAvg.orientation = gpsHistory[Math.floor(gpsHistory.length / 2)].orientation;
+		//gpsHistory[Math.floor(gpsHistory.length / 2)].orientation;
 		gpsHistory.shift();
 
 		if (!sensors.gps.active) {
-			sensors.gps.data.latitude = parseFloat(crdAvg.latitude.toFixed(settings.gps.accuracy));
-			sensors.gps.data.longitude = parseFloat(crdAvg.longitude.toFixed(settings.gps.accuracy));
+			sensors.gps.data.latitude = parseFloat(crdAvg.latitude.toFixed(gpsAccuracy));
+			sensors.gps.data.longitude = parseFloat(crdAvg.longitude.toFixed(gpsAccuracy));
 
-			sensors.gps.latitude = parseFloat(crdAvg.latitude.toFixed(settings.gps.accuracy));
-			sensors.gps.longitude = parseFloat(crdAvg.longitude.toFixed(settings.gps.accuracy));
-			sensors.gps.altitude = parseFloat(crdAvg.altitude.toFixed(settings.gps.accuracy));
+			sensors.gps.latitude = parseFloat(crdAvg.latitude.toFixed(gpsAccuracy));
+			sensors.gps.longitude = parseFloat(crdAvg.longitude.toFixed(gpsAccuracy));
+			sensors.gps.altitude = parseFloat(crdAvg.altitude.toFixed(gpsAccuracy));
 			sensors.gps.speed = crdAvg.speed == null ? 0 : crd.speed;
 
 			if (sensors.orientation.active) {
-				sensors.gps.orientation = sensors.orientation.degrees;
+				sensors.gps.orientation = crdAvg.orientation
 				sensors.gps.orientationActive = true;
 			}
 		} else {
-			var distance = calculateDistance(sensors.gps.data.latitude, sensors.gps.data.longitude, parseFloat(crdAvg.latitude.toFixed(settings.gps.accuracy)), parseFloat(crdAvg.longitude.toFixed(settings.gps.accuracy)));
+			var distance = calculateDistance(sensors.gps.data.latitude, sensors.gps.data.longitude, parseFloat(crdAvg.latitude.toFixed(gpsAccuracy)), parseFloat(crdAvg.longitude.toFixed(gpsAccuracy)));
 			if (distance >= settings.gps.metersToMove) {
-				sensors.gps.latitude = parseFloat(crdAvg.latitude.toFixed(settings.gps.accuracy));
-				sensors.gps.longitude = parseFloat(crdAvg.longitude.toFixed(settings.gps.accuracy));
-				sensors.gps.altitude = parseFloat(crdAvg.altitude.toFixed(settings.gps.accuracy));
+				sensors.gps.latitude = parseFloat(crdAvg.latitude.toFixed(gpsAccuracy));
+				sensors.gps.longitude = parseFloat(crdAvg.longitude.toFixed(gpsAccuracy));
+				sensors.gps.altitude = parseFloat(crdAvg.altitude.toFixed(gpsAccuracy));
 				sensors.gps.speed = crdAvg.speed == null ? 0 : crd.speed;
 
 				if (sensors.orientation.active) {
@@ -154,8 +168,10 @@ function onMotion(event) {
 }
 
 function onOrientation(e) {
-	//document.getElementById("debug").innerText = prop_dump(e);
-	sensors.orientation.degrees = e.alpha;
+	var compass = (e.alpha + e.beta * e.gamma / 90);
+	//document.getElementById("debug").innerHTML = Math.floor(compass) + "<br>" + Math.floor(e.alpha);
+
+	sensors.orientation.degrees = (compass + 360) % 360;
 	sensors.orientation.active = true;
 }
 

@@ -56,12 +56,12 @@ function coordsToAngle(x1, y1, x2, y2) {
     var legA = x1 - x2;
     var legB = y1 - y2;
     var angles = calculateAngles(legA, legB);
-    angle = angles.angleB;
+    angle = Math.abs(angles.angleB);
     if (y2 < y1 && x2 >= x1) {
         angle = 270 - angles.angleA;
-    } else if (y2 >= y1 && x2 < x1) {
+    } else if (y2 > y1 && x2 < x1) {
         angle = 90 - angles.angleA;
-    } else if (y2 < y1 && x2 < x1) {
+    } else if (y2 <= y1 && x2 < x1) {
         angle = 270 - angles.angleA;
     }
     return angle;

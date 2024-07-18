@@ -28,7 +28,7 @@ var settings = {
 		invertedMove: false,
 	},
     emulation: {
-        enabled: true,
+        enabled: false,
 		debug: false,
         wind: {
             angle: 0,

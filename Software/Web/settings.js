@@ -348,7 +348,7 @@ function playCollectedRecords() {
     if (playingInProgress) {
         debugCollectedRouteIndex = 0;
     }
-    document.getElementById("play_collected_records").innerText = playingInProgress ? "Stop" : "Start";
+    document.getElementById("play_collected_records").innerText = playingInProgress ? "Stop" : "Play";
 }
 
 function showDebug() {
@@ -377,7 +377,7 @@ function showDebug() {
     {
 		var area = createElement("div", { parent: window, class: "settings-prop-area"});
 		createElement("div", { parent: area, text: "Playing Records", class: "settings-label" });
-		createElement("div", { parent: area, text: "Play", id: "play_collected_records", class: "settings-button button", onclick: playCollectedRecords });
+		createElement("div", { parent: area, text: playingInProgress ? "Stop" : "Play", id: "play_collected_records", class: "settings-button button", onclick: playCollectedRecords });
 	}
 }
 

@@ -56,7 +56,6 @@ function importGPX(fileData) {
 		}
 	}
 
-	//*
 	trkpts = doc.querySelectorAll("trkpt");
 	for (let rtept of trkpts) {
 		var point = { x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) };
@@ -65,7 +64,6 @@ function importGPX(fileData) {
 			route.points.push(point);
 		}
 	}
-	//*/
 
 	/*
 	var points = [];
@@ -102,7 +100,7 @@ function importGPX(fileData) {
 			}
 		}
 	}
-	//*/
+	*/
 	
 	finishImport();
 }

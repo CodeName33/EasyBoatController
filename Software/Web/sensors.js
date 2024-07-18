@@ -103,7 +103,7 @@ function gpsSuccess(pos) {
 			sensors.gps.speed = crdAvg.speed == null ? 0 : crd.speed;
 
 			if (sensors.orientation.active) {
-				sensors.gps.orientation = crdAvg.orientation
+				sensors.gps.orientation = crdAvg.orientation;
 				sensors.gps.orientationActive = true;
 			}
 		} else {

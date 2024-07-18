@@ -89,7 +89,7 @@ function gpsSuccess(pos) {
 		crdAvg.latitude /= gpsHistory.length;
 		crdAvg.longitude /= gpsHistory.length;
 		crdAvg.speed /= gpsHistory.length;
-		crdAvg.orientation = gpsHistory[Math.floor(gpsHistory.length / 2)].orientation;
+		crdAvg.orientation = gpsHistory[0].orientation;
 		//gpsHistory[Math.floor(gpsHistory.length / 2)].orientation;
 		gpsHistory.shift();
 

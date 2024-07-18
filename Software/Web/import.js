@@ -64,8 +64,29 @@ function importGPX(fileData) {
 			route.points.push(point);
 		}
 	}
+	
+	finishImport();
+}
 
-	/*
+function importGPXDebug(fileData) {
+	const parser = new DOMParser();
+	var doc = parser.parseFromString(fileData, "application/xml");
+	newRoute();
+	var name = doc.querySelector("name");
+	if (name != null) {
+		if (name.textContent.trim().length > 0) {
+			route.name = name.textContent;
+		}
+	}
+	var rtepts = doc.querySelectorAll("rtept");
+	for (let rtept of rtepts) {
+		var point = { x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) };
+		if (route.points.length == 0 || route.points[route.points.length - 1].x != point.x || route.points[route.points.length - 1].y != point.y)
+		{
+			route.points.push(point);
+		}
+	}
+
 	var points = [];
 	debugCollectedRoute = [];
 	trkpt = doc.querySelectorAll("trkpt");
@@ -100,7 +121,6 @@ function importGPX(fileData) {
 			}
 		}
 	}
-	*/
 	
 	finishImport();
 }
@@ -156,7 +176,10 @@ function onImportReaded(e) {
 	} else if (importType == "gpx") {
 		var dec = new TextDecoder("utf-8");
 		importGPX(dec.decode(e.target.result));
-	} else {
+	} else if (importType == "xml") {
+		var dec = new TextDecoder("utf-8");
+		importGPXDebug(dec.decode(e.target.result));
+	}else {
 		showFatalError("Format '" + importType + "' not supported. Use KML or GPX files");
 	}
 }

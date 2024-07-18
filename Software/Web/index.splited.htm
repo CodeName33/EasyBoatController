@@ -45,6 +45,17 @@
         <!---->
 		
         <script>
+			var mergedVersion = "%MERGED_FILE_VERSION%";
+
+			function getApplicationVersion() {
+				if (mergedVersion == "%" + "MERGED_FILE_VERSION" + "%") {
+					return "Debug";
+				}
+				var d = new Date();
+				d.setTime(parseInt(mergedVersion) * 1000);
+				return (d.getFullYear() % 100) + "" + (d.getMonth() + "").padStart(2, "0") + "." + (d.getDate() + "").padStart(2, "0") + "." + (d.getHours() + "").padStart(2, "0");
+			}
+
             function hideBlackCover() {
                 switchClass(document.getElementById("black_cover"), "hidden", true);
             }

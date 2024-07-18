@@ -172,6 +172,13 @@ function exportSettingsDialog() {
 function editSettings() {
     areaSetting = createModalWindow("Settings", closeModalWindow, undefined, closeModalWindow);
 	addModalButton("Restore Deaults", restoreDefaultSettings);
+
+	{
+		var area = createElement("div", { parent: areaSetting, class: "settings-prop-area"});
+		createElement("div", { parent: area, text: "Version", class: "settings-label" });
+		createElement("div", { parent: area, class: "settings-view", text: getApplicationVersion() });
+	}
+
     if (!window.location.href.startsWith("file://")) {
 		addModalButton("Download App", downloadSelf);
 	}

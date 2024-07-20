@@ -164,3 +164,12 @@ Now you can start your engine wit preferred speed and press button "Start Naviga
 **AccelDrive** - Accelerometer Drive Options
  - **Min Angle To Move** - minimum angle changes to accept. This can avoid many garbage changes.
  
+# Some Videos
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/HxvT-cGLmB0/0.jpg)](http://www.youtube.com/watch?v=HxvT-cGLmB0 "EasyBoatController - Steering Wheel Test")
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/xiY143fznu8/0.jpg)](http://www.youtube.com/watch?v=xiY143fznu8 "EasyBoatController - Rudder Lock Testing")
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/BEtO-wEw2SI/0.jpg)](http://www.youtube.com/watch?v=BEtO-wEw2SI "EasyBoatController - Movements Test")
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/R22tecXQIwo/0.jpg)](http://www.youtube.com/watch?v=R22tecXQIwo "EasyBoatController - Short Creating And Testing")

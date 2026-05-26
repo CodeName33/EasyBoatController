@@ -17,7 +17,13 @@ long statusTargetStep = targetStep;
 //FastAccelStepperEngine engine = FastAccelStepperEngine();
 //FastAccelStepper *stepper = NULL;
 
+namespace drivers {
+  const int A4988 = 0;
+  const int TMC2209 = 1;
+}
+
 namespace settings {
+  const int driver = drivers::TMC2209;
   const long statusDelay = 200;
   const long pingDelay = 1000;
   namespace pins {
@@ -48,16 +54,27 @@ class CMotorController
     int pinS;
     long pos = 0;
     long target = 0;
-    long steps = 50;
+    long steps = 256;
     long csteps = 0;
     long workStep = 0;
     int operationStep = 0;
-    unsigned long stepWait = 600;
-    unsigned long releaseWait = 1200;
+    unsigned long stepWait = 64;
+    unsigned long releaseWait = 64;
     unsigned long stepTimer = 0;
     bool enabled = false;
   public:
-    CMotorController(int pinE_, int pinD_, int pinS_, int steps_ = 50) : pinE(pinE_), pinD(pinD_), pinS(pinS_), steps(steps_) {
+    CMotorController(int pinE_, int pinD_, int pinS_, int driver = drivers::TMC2209) : pinE(pinE_), pinD(pinD_), pinS(pinS_) {
+
+      if (driver == drivers::A4988) {
+        steps = 50;
+        stepWait = 700;
+        releaseWait = 700;
+      } else if (driver == drivers::TMC2209)  {
+        steps = 256;
+        stepWait = 64;
+        releaseWait = 64;
+      }
+
       pinMode(pinE, OUTPUT);
       digitalWrite(pinE, HIGH); //OFF
 
@@ -142,7 +159,7 @@ class CMotorController
       }
     }
 };
-CMotorController motorController(settings::pins::enable, settings::pins::dir, settings::pins::step);
+CMotorController motorController(settings::pins::enable, settings::pins::dir, settings::pins::step, settings::driver);
 
 class MyServerCallbacks: public BLEServerCallbacks {
   void onConnect(BLEServer* pServer) {

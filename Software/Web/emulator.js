@@ -60,7 +60,7 @@ function emulatorMoveBoat() {
 		boat.emulated.a = a;
 		boat.emulated.x = x;
 		boat.emulated.y = y;
-		if  ((new Date().getTime() - boat.emulated.time.getTime()) / 1000 > settings.emulation.boat.delaySeconds ) {
+		if  ((new Date().getTime() - (boat.emulated.time?.getTime() || 0)) / 1000 > settings.emulation.boat.delaySeconds ) {
 			boat.a = boat.emulated.a;
 			boat.x = boat.emulated.x;
 			boat.y = boat.emulated.y;

@@ -1,3 +1,4 @@
+/** @type {Bluetooth} */
 var bluetooth = {
     active: false,
     send: {
@@ -18,23 +19,33 @@ var bluetooth = {
 	},
 };
 
+//@ts-ignore
 var bleDevice = null;
+//@ts-ignore
 var bleServer = null;
+//@ts-ignore
 var bleServiceFound = null;
 var statusCharacteristicFound = null;
 
 function initBluetooth() {
-	if (!navigator.bluetooth) {
+	if (!("bluetooth" in navigator)) {
 		showFatalError("Bluetooth error", "Web Bluetooth API is not available in this browser");
 		return;
 	}
 }
 
 function connectToBluetoothDevice(){
+	if (!("bluetooth" in navigator)) {
+		showFatalError("Bluetooth error", "Web Bluetooth API is not available in this browser");
+		sidebarBluetooth.innerText = "Connect Bluetooth";
+		return;
+	}
+	//@ts-ignore
 	navigator.bluetooth.requestDevice({
 		filters: [{name: bluetooth.info.deviceName}],
 		optionalServices: [bluetooth.info.bleService]
 	})
+	//@ts-ignore
 	.then(device => {
 		bleDevice = device;
 		device.addEventListener('ebcservicedisconnected', onBluetoothDisconnected);
@@ -42,6 +53,7 @@ function connectToBluetoothDevice(){
 		//document.getElementById("debug").innerText = "bt01";
 		return device.gatt.connect();
 	})
+	//@ts-ignore
 	.then(gattServer =>{
 		bleServer = gattServer;
 		console.log("Connected to EBC device");
@@ -49,6 +61,7 @@ function connectToBluetoothDevice(){
 		//document.getElementById("debug").innerText = "bt02";
 		return bleServer.getPrimaryService(bluetooth.info.bleService);
 	})
+	//@ts-ignore
 	.then(service => {
 		bleServiceFound = service;
 		console.log("Service discovered:", service.uuid);
@@ -56,6 +69,7 @@ function connectToBluetoothDevice(){
 		//document.getElementById("debug").innerText = "bt03";
 		return service.getCharacteristic(bluetooth.info.statusCharacteristic);
 	})
+	//@ts-ignore
 	.then(characteristic => {
 		//document.getElementById("debug").innerText = "bt04";
 		onBluetoothState(true);
@@ -75,6 +89,7 @@ function connectToBluetoothDevice(){
 		//document.getElementById("debug").innerText = "bt10_1" + v;
 		return v;
 	})
+	//@ts-ignore
 	.then(value => {
 		//document.getElementById("debug").innerText = "bt11";
 		console.log("Read value: ", value);
@@ -86,6 +101,7 @@ function connectToBluetoothDevice(){
 		bluetooth.received.time = new Date();
 		//retrievedValue.innerHTML = decodedValue;
 	})
+	//@ts-ignore
 	.catch(error => {
 		if (("" + error).indexOf("GATT operation failed for unknown reason") < 0) {
 			showFatalError('Error', error);
@@ -93,12 +109,20 @@ function connectToBluetoothDevice(){
 	})
 }
 
+/**
+ * 
+ * @param {*} event 
+ */
 function onBluetoothDisconnected(event){
 	console.log('Device Disconnected:', event.target.device.name);
 	onBluetoothState(false);
 	connectToBluetoothDevice();
 }
 
+/**
+ * 
+ * @param {*} event 
+ */
 function handleCharacteristicChange(event){
 	const newValueReceived = new TextDecoder().decode(event.target.value);
 	console.log("status: ", newValueReceived);
@@ -124,10 +148,11 @@ function onBluetoothTime() {
 			bluetooth.send.data = null;
 			sendBluetoothData(data);
 		}
-		var secondsInactive = (new Date() - bluetooth.received.time) / 1000;
+		var secondsInactive = (new Date().getTime() - bluetooth.received.time.getTime()) / 1000;
 		if (secondsInactive > bluetooth.info.timeoutSeconds) {
 			console.log("Bluetooth timeout" + secondsInactive);
 			try {
+				//@ts-ignore
 				bleDevice.gatt.disconnect();
 			} catch {};
 			onBluetoothState(false);
@@ -138,6 +163,7 @@ function onBluetoothTime() {
 function switchBluetoothConnect() {
 	if (bluetooth.active) {
 		try {
+			//@ts-ignore
 			bleDevice.gatt.disconnect();
 		} catch {};
 		onBluetoothState(false);
@@ -147,15 +173,24 @@ function switchBluetoothConnect() {
 	}
 }
 
+/**
+ * 
+ * @param {Object.<string, string | number>} values 
+ * @returns 
+ */
 function sendBluetoothData(values){
 	if (bluetooth.send.busy) {
+		//@ts-ignore
 		bluetooth.send.data = values;
 		return;
 	}
 
+	//@ts-ignore
 	if (bleServer && bleServer.connected) {
 		bluetooth.send.busy = true;
+		//@ts-ignore
 		bleServiceFound.getCharacteristic(bluetooth.info.controlCharacteristic)
+		//@ts-ignore
 		.then(characteristic => {
 			//console.log("Found the LED characteristic: ", characteristic.uuid);
 			var enc = new TextEncoder();
@@ -171,10 +206,12 @@ function sendBluetoothData(values){
 		.then(() => {
 			bluetooth.send.busy = false;
 			if ("T" in values) {
+				//@ts-ignore
 				bluetooth.send.pos = values.T;
 			}
 			//console.log("Value written to control:", values);
 		})
+		//@ts-ignore
 		.catch(error => {
 			bluetooth.send.busy = false;
 			bluetooth.send.data = values;
@@ -184,6 +221,7 @@ function sendBluetoothData(values){
 		//console.error ("Bluetooth is not connected. Cannot write to characteristic.");
 		if (bluetooth.active) {
 			try {
+				//@ts-ignore
 				bleDevice.gatt.disconnect();
 			} catch {};
 			onBluetoothState(false);
@@ -191,6 +229,10 @@ function sendBluetoothData(values){
 	}
 }
 
+/**
+ * 
+ * @param {boolean} state 
+ */
 function onBluetoothState(state) {
 	if (bluetooth.active != state) {
 		if (state) {

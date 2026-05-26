@@ -1,4 +1,5 @@
 var gpsWatchId = 0;
+/** @type {Sensors} */
 var sensors = {
 	gps: {
 		data: {
@@ -34,6 +35,7 @@ var sensors = {
 	}
 };
 
+/** @type {{x: number, y: number, time: Date | null}} */
 var detectSpeedData = {
 	y: 0,
 	x: 0,
@@ -46,9 +48,15 @@ var gpsOptions = {
 	maximumAge: 0,
 };
 
+/** @type {Array.<GPSData>} */
 var gpsHistory = [];
 var gpsAccuracy = 8;
 
+/**
+ * 
+ * @param {GeolocationPosition} pos 
+ * @returns 
+ */
 function gpsSuccess(pos) {
 	const crd = pos.coords;
 
@@ -65,7 +73,7 @@ function gpsSuccess(pos) {
 	gpsHistory.push( {
 		latitude: latitude,
 		longitude: longitude,
-		altitude: crd.altitude,
+		altitude: crd.altitude || 0,
 		speed: crd.speed == null ? 0 : crd.speed,
 		orientation: sensors.orientation.degrees,
 	});
@@ -100,7 +108,7 @@ function gpsSuccess(pos) {
 			sensors.gps.latitude = parseFloat(crdAvg.latitude.toFixed(gpsAccuracy));
 			sensors.gps.longitude = parseFloat(crdAvg.longitude.toFixed(gpsAccuracy));
 			sensors.gps.altitude = parseFloat(crdAvg.altitude.toFixed(gpsAccuracy));
-			sensors.gps.speed = crdAvg.speed == null ? 0 : crd.speed;
+			sensors.gps.speed = crdAvg.speed == null ? 0 : (crd.speed || 0);
 
 			if (sensors.orientation.active) {
 				sensors.gps.orientation = crdAvg.orientation;
@@ -112,7 +120,7 @@ function gpsSuccess(pos) {
 				sensors.gps.latitude = parseFloat(crdAvg.latitude.toFixed(gpsAccuracy));
 				sensors.gps.longitude = parseFloat(crdAvg.longitude.toFixed(gpsAccuracy));
 				sensors.gps.altitude = parseFloat(crdAvg.altitude.toFixed(gpsAccuracy));
-				sensors.gps.speed = crdAvg.speed == null ? 0 : crd.speed;
+				sensors.gps.speed = crdAvg.speed == null ? 0 : (crd.speed || 0);
 
 				if (sensors.orientation.active) {
 					sensors.gps.orientation = crdAvg.orientation;
@@ -133,20 +141,28 @@ function gpsSuccess(pos) {
 	
 }
 
+/**
+ * 
+ * @param {GeolocationPositionError} err 
+ */
 function gpsError(err) {
 	console.log("GPS Error " + err.code + " " + err.message);
 	//navigator.geolocation.getCurrentPosition(gpsSuccess, gpsError, gpsOptions);
 }
 
+/**
+ * 
+ * @param {DeviceMotionEvent} event 
+ */
 function onMotion(event) {
 	sensors.motion.active = true;
-	sensors.motion.accelerationIncludingGravityX = event.accelerationIncludingGravity.x;
-	sensors.motion.accelerationIncludingGravityY = event.accelerationIncludingGravity.y;
-	sensors.motion.accelerationIncludingGravityZ = event.accelerationIncludingGravity.z;
+	sensors.motion.accelerationIncludingGravityX = event.accelerationIncludingGravity?.x || 0;
+	sensors.motion.accelerationIncludingGravityY = event.accelerationIncludingGravity?.y || 0;
+	sensors.motion.accelerationIncludingGravityZ = event.accelerationIncludingGravity?.z || 0;
 
-	sensors.motion.rotationRateA = event.rotationRate.alpha;
-	sensors.motion.rotationRateB = event.rotationRate.beta;
-	sensors.motion.rotationRateG = event.rotationRate.gamma;
+	sensors.motion.rotationRateA = event.rotationRate?.alpha || 0;
+	sensors.motion.rotationRateB = event.rotationRate?.beta || 0;
+	sensors.motion.rotationRateG = event.rotationRate?.gamma || 0;
 
 	var ax = sensors.motion.accelerationIncludingGravityX;
 	var ay = sensors.motion.accelerationIncludingGravityY;
@@ -163,12 +179,16 @@ function onMotion(event) {
 		ay = -maxy;
 	}
 
-	var angle =(radians_to_degrees(Math.acos(-ay/maxy)) - 90).toFixed(0);
-	sensors.motion.angle = angle;
+	var angle = (radians_to_degrees(Math.acos(-ay/maxy)) - 90).toFixed(0);
+	sensors.motion.angle = parseFloat(angle);
 }
 
+/**
+ * 
+ * @param {DeviceOrientationEvent} e 
+ */
 function onOrientation(e) {
-	var compass = (e.alpha + e.beta * e.gamma / 90);
+	var compass = ((e.alpha || 0) + (e.beta || 0) * (e.gamma || 0) / 90);
 	//document.getElementById("debug").innerHTML = Math.floor(compass) + "<br>" + Math.floor(e.alpha);
 
 	sensors.orientation.degrees = (compass + 360) % 360;
@@ -205,5 +225,5 @@ try {
 	gpsWatchId = navigator.geolocation.watchPosition(gpsSuccess, gpsError, gpsOptions);
 	//navigator.geolocation.getCurrentPosition(gpsSuccess, gpsError, gpsOptions);
 } catch (error) {
-	showFatalError(error);
+	showFatalError("Error", `${error}`);
 }

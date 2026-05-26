@@ -1,14 +1,22 @@
-var canvas = null;
-var ctx = null;
+/** @type {HTMLCanvasElement} */
+var canvas;
+/** @type {CanvasRenderingContext2D} */
+var ctx;
 const boatImage = document.getElementById("boat");
 var display = {
 	x: 0,
 	y: 0,
-	scale: 0.01,
+	scale: 0.001,
 	width: 0,
 	height: 0,
 };
 
+/**
+ * 
+ * @param {number} x 
+ * @param {number} y 
+ * @returns {{x: number, y: number}}
+ */
 function screenCoordToReal(x, y) {
 	return {
 		x: display.x + (x - display.width / 2) * display.scale,
@@ -16,6 +24,12 @@ function screenCoordToReal(x, y) {
 	};
 }
 
+/**
+ * 
+ * @param {number} x 
+ * @param {number} y 
+ * @returns {{x: number, y: number}}
+ */
 function realCoordToScreen(x, y) {
 	return {
 		x: display.width / 2 + (x - display.x) / display.scale,
@@ -23,6 +37,12 @@ function realCoordToScreen(x, y) {
 	};
 }
 
+/**
+ * 
+ * @param {number} x 
+ * @param {number} y 
+ * @param {number} scale 
+ */
 function showPoint(x, y, scale)  {
 	display.x = x;
 	display.y = y;
@@ -41,11 +61,12 @@ function createCanvas() {
 		canvas.setAttribute("class", "screen");
 		display.width = rect.right - rect.left - 4;
 		display.height = rect.bottom - rect.top - 4;
-		canvas.setAttribute("width", display.width);
-		canvas.setAttribute("height", display.height);
+		canvas.setAttribute("width", `${display.width}`);
+		canvas.setAttribute("height", `${display.height}`);
 		screenspace.appendChild(canvas);
+		//@ts-ignore
 		ctx = canvas.getContext("2d");
-		//canvas.onclick = addPoint;
+		canvas.ondblclick = addPoint;
 
 		canvas.ontouchmove = onTouchMove;
 		canvas.ontouchstart = onTouchStart;
@@ -60,6 +81,14 @@ function render() {
 	drawBoat(boat.x, boat.y, boat.a);
 }    
 
+/**
+ * 
+ * @param {number} X1 
+ * @param {number} X2 
+ * @param {number} Y1 
+ * @param {number} Y2 
+ * @returns {number}
+ */
 function getZoomDistance(X1, X2, Y1, Y2)
 {
     var W = Math.abs(X1 - X2);
@@ -67,14 +96,24 @@ function getZoomDistance(X1, X2, Y1, Y2)
     return Math.sqrt(W * W + H * H);
 }
 
+/**
+ * 
+ * @param {number} x 
+ * @param {number} y 
+ */
 function moveViewport(x, y) {
 	display.x -= x * display.scale;
 	display.y += y * display.scale;
 }
 
+/**
+ * 
+ * @param {WheelEvent} e 
+ */
 function onWheel(e) {
 	var delta = e.deltaY;
 	if (delta == undefined) {
+		//@ts-ignore
 		delta = -e.wheelDelta;
 	}
 
@@ -85,6 +124,10 @@ function onWheel(e) {
 	//document.getElementById("debug").innerText = delta;
 }
 
+/**
+ * 
+ * @param {MouseEvent} e 
+ */
 function onMouseMove(e) {
 	if (e.buttons & 1) {
 		//document.getElementById("debug").innerText = prop_dump(e);
@@ -100,11 +143,19 @@ var touchZoomZoomDistance = 0;
 var inMove = false;
 var inZoom = false;
 
+/**
+ * 
+ * @param {TouchEvent} e 
+ */
 function onTouchEnd(e) {
 	inMove = false;
 	inZoom = false;
 }
 
+/**
+ * 
+ * @param {TouchEvent} e 
+ */
 function onTouchStart(e) {
 	if (e.touches.length == 1) {
 		touchX = e.touches[0].pageX;
@@ -122,6 +173,10 @@ function getWMax()
     return display.width > display.height ? display.width : display.height;
 }
 
+/**
+ * 
+ * @param {TouchEvent} e 
+ */
 function onTouchMove(e) {
 	if (e.touches.length == 1) {
 		if (inMove) {
@@ -150,19 +205,25 @@ function onTouchMove(e) {
     e.stopImmediatePropagation();
 }
 
+/**
+ * 
+ * @param {MouseEvent} e 
+ */
 function addPoint(e) {
-	let boundingRect = canvas.getBoundingClientRect();
-	let eX = e.clientX - boundingRect.left;
-	let eY = e.clientY - boundingRect.top;
-	var realCoords = screenCoordToReal(eX, eY);
-	if (route.points.length == 0) {
-		route.points.push({ x: boat.x, y: boat.y });
+	if (settings.emulation.pointOnDoubleClick) {
+		let boundingRect = canvas.getBoundingClientRect();
+		let eX = e.clientX - boundingRect.left;
+		let eY = e.clientY - boundingRect.top;
+		var realCoords = screenCoordToReal(eX, eY);
+		if (route.points.length == 0) {
+			route.points.push({ x: boat.x, y: boat.y });
+		}
+		route.points.push({ x: realCoords.x, y: realCoords.y });
 	}
-	route.points.push({ x: realCoords.x, y: realCoords.y });
 }
 
 function scrollToBoat() {
-	showPoint(boat.x, boat.y, 0.0002);
+	showPoint(boat.x, boat.y, 0.00002);
 }
 
 function scrollToRoute() {
@@ -175,7 +236,8 @@ function scrollToRoute() {
 		}
 		if (settings.emulation.enabled) {
 			boat.x = route.points[0].x;
-			boat.y = route.points[0].y;
+			boat.y = route.points[0].y + 0.02;
+			boat.a = 90;
 			boat.emulated.x = boat.x;
 			boat.emulated.y = boat.y;
 		}
@@ -183,6 +245,12 @@ function scrollToRoute() {
 	}
 }
 
+/**
+ * 
+ * @param {number} x 
+ * @param {number} y 
+ * @param {number} angle 
+ */
 function drawBoat(x, y, angle) {;
 	//const boatPoint = { x: 75, y: 25, w: 80, h: 50, rudder: { x: 13, y: 25 } };
 	const boatPoint = { x: 46, y: 24, w: 48, h: 48, rudder: { x: 10, y: 24 } };
@@ -210,7 +278,7 @@ function drawBoat(x, y, angle) {;
 	if (coordsEnd.x > coordsStart.x) {
 		for (var i = coordsStart.x; i <= coordsEnd.x; i+=linesInterval) {
 			var c = realCoordToScreen(i, coordsStart.y);
-			ctx.moveTo(c.x, 0, 0);
+			ctx.moveTo(c.x, 0);
 			ctx.lineTo(c.x, display.height);
 		}
 	}
@@ -218,7 +286,7 @@ function drawBoat(x, y, angle) {;
 	if (coordsEnd.y < coordsStart.y) {
 		for (var i = coordsStart.y; i >= coordsEnd.y; i-=linesInterval) {
 			var c = realCoordToScreen(coordsStart.x, i);
-			ctx.moveTo(0, c.y, 0);
+			ctx.moveTo(0, c.y);
 			ctx.lineTo(display.width, c.y);
 		}
 	}
@@ -229,12 +297,12 @@ function drawBoat(x, y, angle) {;
 	ctx.strokeStyle = "#00A0A0";
 	ctx.fillStyle = "#00A0A0";
 	ctx.beginPath();
-	screenBase = screenPart / 2;
-	ctx.moveTo(screenBase, screenBase, 0);
+	var screenBase = screenPart / 2;
+	ctx.moveTo(screenBase, screenBase);
 	ctx.lineTo(screenBase + screenPart, screenBase);
-	ctx.moveTo(screenBase, screenBase - screenPart / 16, 0);
+	ctx.moveTo(screenBase, screenBase - screenPart / 16);
 	ctx.lineTo(screenBase, screenBase + screenPart / 16);
-	ctx.moveTo(screenBase + screenPart, screenBase - screenPart / 16, 0);
+	ctx.moveTo(screenBase + screenPart, screenBase - screenPart / 16);
 	ctx.lineTo(screenBase + screenPart, screenBase + screenPart / 16);
 	ctx.stroke(); 
 	ctx.textAlign = "center";
@@ -249,7 +317,7 @@ function drawBoat(x, y, angle) {;
 		if (i > 0) {
 			ctx.strokeStyle = (i == 1 ? "#00A000" : "#0060A0");
 			ctx.beginPath();
-			ctx.moveTo(lx, ly, 0);
+			ctx.moveTo(lx, ly);
 			ctx.lineTo(screenCoords.x, screenCoords.y);
 			ctx.stroke(); 
 		}
@@ -282,6 +350,7 @@ function drawBoat(x, y, angle) {;
 	ctx.translate(boatScreenCoords.x, boatScreenCoords.y);
 	ctx.rotate((-angle + 360) * Math.PI / 180);
 
+	//@ts-ignore
 	ctx.drawImage(boatImage, -boatPoint.x, -boatPoint.y, boatPoint.w, boatPoint.h);
 	ctx.fillStyle = "#fff";
 	ctx.beginPath();

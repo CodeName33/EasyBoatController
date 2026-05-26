@@ -28,6 +28,7 @@ function removeComments($code)
     $codeArray = str_split($code);
     $inQ1 = false;
     $inQ2 = false;
+	$inQ3 = false;
     $inCLine = false;
     $inCLong = false;
     $lastChar = "";
@@ -36,16 +37,20 @@ function removeComments($code)
     {
         if (!$inCLine && !$inCLong)
         {
-            if ($char == '"' && !$inQ2 && $lastChar != "\\")
+            if ($char == '"' && !$inQ2 && !$inQ3 && $lastChar != "\\")
             {
                 $inQ1 = !$inQ1;
             }
-            if ($char == "'" && !$inQ1 && $lastChar != "\\")
+            if ($char == "'" && !$inQ1 && !$inQ3 && $lastChar != "\\")
             {
                 $inQ2 = !$inQ2;
             }
+			if ($char == "`" && !$inQ1 && !$inQ2 && $lastChar != "\\")
+            {
+                $inQ3 = !$inQ3;
+            }
 
-            if ($inQ1 || $inQ2)
+            if ($inQ1 || $inQ2 || $inQ3)
             {
                 $outCode .= $char;
             }
@@ -55,7 +60,7 @@ function removeComments($code)
             }
         }
 
-        if (!$inQ1 && !$inQ2)
+        if (!$inQ1 && !$inQ2 && !$inQ3)
         {
             if ($inCLine)
             {
@@ -107,35 +112,44 @@ function compactJS($code)
 	//file_put_contents("./_temp".$fileN.".js", $code);
 
     $outCode= "";
+    $code = str_replace("\r", "", $code);
     $code = str_replace("\n", " ", $code);
     $codeArray = str_split($code);
     $inQ1 = false;
     $inQ2 = false;
     $lastChar = "\0";
     $lastPrintedChar = "\0";
+    $bracketsDepth = 0;
     
     foreach ($codeArray as $char)
     {
-        if ($char == '"' && !$inQ2 && $lastChar != "\\")
-        {
+        if ($char == '"' && !$inQ2 && $lastChar != "\\") {
             $inQ1 = !$inQ1;
         }
-        if ($char == "'" && !$inQ1 && $lastChar != "\\")
-        {
+
+        if ($char == "'" && !$inQ1 && $lastChar != "\\") {
             $inQ2 = !$inQ2;
         }
 
-        if (!$inQ1 && !$inQ2)
-        {
-            if ($char == "\t")
-            {
+        if (!$inQ1 && !$inQ2) {
+            if ($char == "\t") {
                 $char = " ";
+            } /*else if ($char == "\n") {
+                if ($bracketsDepth == 0 && in_array($lastPrintedChar, [ ")", "\"", "'" ])) {
+                    $outCode .= ";";
+                }
+                $char = " ";
+            }*/ else if ($char == "(") {
+                $bracketsDepth++;
+            } else if ($char == ")") {
+                $bracketsDepth--;
             }
         }
 
         if ($inQ1 || $inQ2)
         {
             $outCode .= $char;
+            $lastPrintedChar = $char;
 			//echo $char;
         }
         else if ($char != " " || (strpos(" +-/*{}=,;\"'()![]&|:.<>", $lastChar) === FALSE))
@@ -158,7 +172,7 @@ function compactJS($code)
 function compactCSS($style, $basePath = "")
 {
     $outStyle = "";
-    $style = str_replace("\r", " ", $style);
+    $style = str_replace("\r", "", $style);
     $style = str_replace("\n", " ", $style);
     $style = str_replace("\t", " ", $style);
     $styleArray = str_split($style);
@@ -369,7 +383,7 @@ foreach ($files as $file)
             $newFile = str_replace(".splited", "", $file);
         }
 
-        file_put_contents($newFile, "<!DOCTYPE html>".$dom->saveHTML($dom->documentElement));
+        file_put_contents($newFile, str_replace("%MERGED_FILE_VERSION%", time(), "<!DOCTYPE html>".$dom->saveHTML($dom->documentElement)));
         echo "Saved: '".$file."' => '".$newFile."'".PHP_EOL;
     }
 }

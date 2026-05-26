@@ -1,3 +1,4 @@
+/** @type {Settings} */
 var settings = {
     course: {
         maximumRudderPositionPercent: 50,
@@ -5,6 +6,7 @@ var settings = {
         takingPointsNotNecessary: true,
 		keepBoatNearLineQ: 2.0,
         keepBoatNearLineMaxPercent: 100,
+        keepBoatNearLineMaxAngleToLine: 70,
         points: {
 			distanceToPointToBeDone: 10,
 		},
@@ -26,10 +28,12 @@ var settings = {
 		autoCalibrationCenter: 105,
 		defaultSideMax: 90,
 		invertedMove: false,
+        invertedCalibration: false,
 	},
     emulation: {
         enabled: false,
 		debug: false,
+        pointOnDoubleClick: false,
         wind: {
             angle: 0,
             force: 0,
@@ -47,8 +51,15 @@ var settings = {
         minAngleToMove: 3,
     },
 };
-var settingsToImport = {};
 
+/** @type {{settings: Settings, routes: Object.<string, *>}} */
+var settingsToImport;
+
+/**
+ * 
+ * @param {*} settings 
+ * @param {*} newSettings 
+ */
 function loadSettings(settings, newSettings) {
 	for (var key in newSettings) {
 		if (typeof newSettings[key] === 'object') {
@@ -68,9 +79,11 @@ function exportSettings() {
         routes: {},
     };
 
+    //@ts-ignore
     if (document.getElementById("export_option_settings").checked) {
         exportData.settings = settings;
     }
+    //@ts-ignore
     if (document.getElementById("export_option_routes").checked) {
         exportData.routes = storageGetObject("routes");
     }
@@ -84,9 +97,15 @@ function importSettings() {
 	if (input == null) {
     	input = createElement("input", { parent: document.body, id: "import_settings", style: "display:none", type: "file", onchange: onImportSettingsSelected });
 	}
+    //@ts-ignore
     input.click();
+    
 }
 
+/**
+ * 
+ * @param {*} e 
+ */
 function onImportSettingsSelected(e) {
     var input = e.currentTarget;
     if (input.files) {
@@ -97,7 +116,7 @@ function onImportSettingsSelected(e) {
             var reader = new FileReader();
             reader.onload = onImportSettingsReaded;
             reader.onerror = function() {
-                showFatalError("Can't read file");
+                showFatalError("Error", "Can't read file");
             };
             reader.readAsText(file)
             //reader.readAsArrayBuffer(file);
@@ -107,10 +126,12 @@ function onImportSettingsSelected(e) {
 
 function importSettingsData() {
     var routes = storageGetObject("routes");
+    //@ts-ignore
     if (document.getElementById("import_option_settings").checked) {
         loadSettings(settings, settingsToImport.settings);
         localStorage.setItem("settings", JSON.stringify(settings));
     }
+    //@ts-ignore
     if (document.getElementById("import_option_routes").checked) {
         for (var key in settingsToImport.routes) {
             routes[key] = settingsToImport.routes[key];
@@ -137,6 +158,10 @@ function importSettingsDialog() {
 	}
 }
 
+/**
+ * 
+ * @param {*} e 
+ */
 function onImportSettingsReaded(e) {
     try {
         var importData = JSON.parse(e.target.result);
@@ -176,6 +201,7 @@ function editSettings() {
 	{
 		var area = createElement("div", { parent: areaSetting, class: "settings-prop-area"});
 		createElement("div", { parent: area, text: "Version", class: "settings-label" });
+        //@ts-ignore
 		createElement("div", { parent: area, class: "settings-view", text: getApplicationVersion() });
 	}
 
@@ -206,6 +232,11 @@ function restoreDefaultSettings() {
 	closeModalWindow();
 }
 
+/**
+ * 
+ * @param {string} name 
+ * @returns 
+ */
 function getHumanizedName(name) {
     var word = "";
     var hname = "";
@@ -229,6 +260,11 @@ function getHumanizedName(name) {
     return hname;
 }
 
+/**
+ * 
+ * @param {*} obj 
+ * @param {number} offset 
+ */
 function editSettingsObject(obj, offset) {
     for (var key in obj) {
         var type = typeof obj[key];
@@ -238,15 +274,26 @@ function editSettingsObject(obj, offset) {
         } else if (typeof obj[key] === 'boolean') {
             var area =createElement("div", { parent: areaSetting, class: "settings-prop-area", style: "margin-left: " + offset + "em;" });
             createElement("div", { parent: area, text: getHumanizedName(key), class: "settings-label" });
-            var el =createElement("input", { parent: area, type: "checkbox", class: "settings-edit", object: obj, objectkey: key, onblur: function(e) {
+            var el =createElement("input", { parent: area, type: "checkbox", class: "settings-edit", object: obj, objectkey: key, 
+                /**
+                 * 
+                 * @param {*} e 
+                 */
+                onblur: function(e) {
                 e.currentTarget.object[e.currentTarget.getAttribute("objectkey")] = e.currentTarget.checked;
                 localStorage.setItem("settings", JSON.stringify(settings));
             } });
+            //@ts-ignore
             el.checked = obj[key];
         } else {
             var area =createElement("div", { parent: areaSetting, class: "settings-prop-area", style: "margin-left: " + offset + "em;" });
             createElement("div", { parent: area, text: getHumanizedName(key), class: "settings-label" });
-            createElement("input", { parent: area, value: obj[key], class: "settings-edit", object: obj, objectkey: key, onblur: function(e) {
+            createElement("input", { parent: area, value: obj[key], class: "settings-edit", object: obj, objectkey: key, 
+                /**
+                 * 
+                 * @param {*} e 
+                 */
+                onblur: function(e) {
                 e.currentTarget.object[e.currentTarget.getAttribute("objectkey")] = parseFloat(e.currentTarget.value);
                 localStorage.setItem("settings", JSON.stringify(settings));
             } });
@@ -255,6 +302,7 @@ function editSettingsObject(obj, offset) {
 }
 
 localStorage.setItem("settings-default", JSON.stringify(settings));
+/** @type {HTMLElement | null} */
 var areaSetting = null;
 var settingsString = localStorage.getItem("settings");
 if (settingsString != undefined && settingsString != null && settingsString.length > 0) {
@@ -272,18 +320,23 @@ addSidebarButton("Settings...", editSettings);
 
 
 var debugCollectedRouteIndex = 0;
+/** @type {Array.<CollectedRoute>} */
 var debugCollectedRoute = [];
 var playingInProgress = false;
+/** @type {Date | null} */
 var playStartTime = null;
 var collectionInProgress = false;
+/** @type {Array.<CollectedRoute>} */
 var debugCollected = [];
+/** @type {Date | null} */
 var debugCollectTime = null;
+/** @type {Date | null} */
 var debugCollectStartTime = null;
 function debugOnTime() {
 	if (collectionInProgress) {
-		var elapsed = (new Date().getTime() - debugCollectTime.getTime());
+		var elapsed = (new Date().getTime() - (debugCollectTime?.getTime() || 0));
 		if (elapsed > 200) {
-			var t = (new Date().getTime() - debugCollectStartTime.getTime());
+			var t = (new Date().getTime() - (debugCollectStartTime?.getTime() || 0));
 			debugCollected.push({
 				time: t,
 				longitude: sensors.gps.lastest.longitude,
@@ -291,12 +344,13 @@ function debugOnTime() {
 				compass: sensors.orientation.degrees,
 			});
 			debugCollectTime = new Date();
+            //@ts-ignore
 			document.getElementById("collected_records").innerText = debugCollected.length;
 		}
 	}
 
     if (playingInProgress) {
-        var diff = (new Date().getTime() - playStartTime.getTime()) / 2;
+        var diff = (new Date().getTime() - (playStartTime?.getTime() || 0)) / 2;
         if (debugCollectedRouteIndex < debugCollectedRoute.length && diff > debugCollectedRoute[debugCollectedRouteIndex].time) {
             sensors.orientation.active = true;
             sensors.orientation.degrees = debugCollectedRoute[debugCollectedRouteIndex].compass;
@@ -312,7 +366,12 @@ function debugOnTime() {
                         altitude: 0,
                         longitude: debugCollectedRoute[debugCollectedRouteIndex].longitude,
                         latitude: debugCollectedRoute[debugCollectedRouteIndex].latitude,
+                        accuracy: 0,
+                        altitudeAccuracy: 0,
+                        heading : 0,
+                        toJSON: function() { return ""; }
                     },
+                    //@ts-ignore
                     debugInPlay: true,
                 });
             }
@@ -346,6 +405,7 @@ function switchCollectData() {
 	} else {
 		saveCollectedData();
 	}
+    //@ts-ignore
 	document.getElementById("collect_data").innerText = collectionInProgress ? "Stop" : "Start";
 }
 
@@ -355,6 +415,7 @@ function playCollectedRecords() {
     if (playingInProgress) {
         debugCollectedRouteIndex = 0;
     }
+    //@ts-ignore
     document.getElementById("play_collected_records").innerText = playingInProgress ? "Stop" : "Play";
 }
 

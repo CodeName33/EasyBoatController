@@ -1,7 +1,11 @@
+
+//58.343307, 38.262089
+/** @type {Boat} */
 var boat = { 
     inited: false, 
-    x: 600, 
-    y: 350,
+    x: 38.262089, //600, 
+    y: 58.343307, //350,
+    realA: 0,
     angleX: 600,
     angleY: 350,
     a: 0, 
@@ -18,6 +22,8 @@ var boat = {
         a: 0,
     },
 };
+
+/** @type { { name: string, points: Array.<Point> } } */
 var route = {
 	name: "New Route",
 	points: []
@@ -26,13 +32,13 @@ var engineStarted = false;
 
 function engineOnTime() {
 	if (sensors.orientation.active) {
-		reportStatus("orientation", "Compass", Math.floor(sensors.orientation.degrees));
+		reportStatus("orientation", "Compass", `${Math.floor(sensors.orientation.degrees)}`);
 	}
 	
     if (sensors.gps.active) {
         reportStatus("gpsLat", "Latitude", sensors.gps.latitude, false);
         reportStatus("gpsLon", "Longitude", sensors.gps.longitude, false);
-        reportStatus("gpsSpeed", "Speed", Math.floor(sensors.gps.detectedSpeed) + " km/h", false);
+        reportStatus("gpsSpeed", "Speed", `${Math.floor(sensors.gps.detectedSpeed)} km/h`, false);
 
         if (!boat.inited 
             || boat.x != sensors.gps.lastest.longitude || boat.y != sensors.gps.lastest.latitude
@@ -66,7 +72,7 @@ function engineOnTime() {
     }
 
     if (sensors.motion.active) {
-        reportStatus("motionAngle", "Phone Angle", sensors.motion.angle + "°", false);
+        reportStatus("motionAngle", "Phone Angle", `${sensors.motion.angle}°`, false);
     } else {
         reportStatus("motionAngle", "Phone Angle", "N/A", true);
     }
@@ -88,7 +94,12 @@ function engineOnTime() {
     correctCourse();
 }
 
-function setRudderTargetPercent(value, dontCompensate) {
+/**
+ * 
+ * @param {number} value 
+ * @param {boolean | undefined} dontCompensate 
+ */
+function setRudderTargetPercent(value, dontCompensate = undefined) {
     var max = (typeof dontCompensate === 'undefined' || !dontCompensate ? correctBySpeed(settings.course.maximumRudderPositionPercent) : settings.course.maximumRudderPositionPercent);
 	var oldTarget = boat.rudder.target;
 	if (value == 0) {
@@ -115,14 +126,19 @@ function setRudderTargetPercent(value, dontCompensate) {
 
 function updateRudderPersentStatus() {
 	if (boat.rudder.pos < 0) {
-		reportStatus("rudderPercent", "Rudder Position", -Math.floor(100.0 / boat.rudder.min * boat.rudder.pos) + "%" );
+		reportStatus("rudderPercent", "Rudder Position", `${-Math.floor(100.0 / boat.rudder.min * boat.rudder.pos)}%` );
 	} else if (boat.rudder.pos > 0) {
-		reportStatus("rudderPercent", "Rudder Position", Math.floor(100.0 / boat.rudder.max * boat.rudder.pos) + "%" );
+		reportStatus("rudderPercent", "Rudder Position", `${Math.floor(100.0 / boat.rudder.max * boat.rudder.pos)}%` );
 	} else {
 		reportStatus("rudderPercent", "Rudder Position", "0%");
 	}
 }
 
+/**
+ * 
+ * @param {{ name: string, points: Array.<Point> } } r 
+ * @returns 
+ */
 function getRouteDistance(r) {
     var length = 0;
     for (var i = 1; i < r.points.length; i++) {
@@ -143,6 +159,11 @@ function getTotalDistance() {
     return length;
 }
 
+/**
+ * 
+ * @param {number} value 
+ * @returns {number}
+ */
 function correctBySpeed(value) {
     if (sensors.gps.detectedSpeed != 0 && settings.course.speedCompensationForSlowRudder.enabled) {
         var v = settings.course.speedCompensationForSlowRudder.compensateAfterSpeedKmh / sensors.gps.detectedSpeed;
@@ -156,6 +177,11 @@ function correctBySpeed(value) {
     return value;
 }
 
+/**
+ * 
+ * @param {number} hours 
+ * @returns {string}
+ */
 function humanizeLeft(hours) {
     var text = "";
     if (hours > 24) {
@@ -214,7 +240,11 @@ function correctCourse() {
         if (settings.course.keepBoatNearLines) {
             var pointsAngle = coordsToAngle(route.points[0].x, route.points[0].y, route.points[1].x, route.points[1].y);
             //console.log(Math.floor(pointsAngle) + " " + Math.floor(boat.a) + " " + Math.floor(compareAngles(pointsAngle, boat.a)));
-            addDiff = (/*distance < distanceToRoute * 2 ||*/ Math.abs(compareAngles(pointsAngle, boat.a)) > 60 ? 0 : distanceToRoute * settings.course.keepBoatNearLineQ);
+            var anglesDiff = Math.abs(compareAngles(pointsAngle, boat.a));
+            if (anglesDiff <= settings.course.keepBoatNearLineMaxAngleToLine) {
+                addDiff = (distanceToRoute * settings.course.keepBoatNearLineQ) * (settings.course.keepBoatNearLineMaxAngleToLine - anglesDiff) / settings.course.keepBoatNearLineMaxAngleToLine;
+            }
+            //addDiff = (/*distance < distanceToRoute * 2 ||*/ Math.abs(compareAngles(pointsAngle, boat.a)) > 60 ? 0 : distanceToRoute * settings.course.keepBoatNearLineQ);
             if (Math.abs(addDiff) > settings.course.keepBoatNearLineMaxPercent) {
                 addDiff = settings.course.keepBoatNearLineMaxPercent * (Math.abs(addDiff) / addDiff);
             }
@@ -223,6 +253,7 @@ function correctCourse() {
 
 
         if (engineStarted) {
+            //console.log(`${diff} ${addDiff}`);
 		    setRudderTargetPercent(diff + addDiff, Math.abs(diff) > 80);
             if (
                 (!settings.course.takingPointsNotNecessary && distance < settings.course.points.distanceToPointToBeDone)

@@ -5,6 +5,11 @@ function initSideBar() {
 	
 }
 
+/**
+ * 
+ * @param {string} key 
+ * @param {boolean} isCritical 
+ */
 function reportCritical(key, isCritical) {
     var field = document.getElementById("status_" + key);
     if (field != null) {
@@ -13,6 +18,13 @@ function reportCritical(key, isCritical) {
     }
 }
 
+/**
+ * 
+ * @param {string} key 
+ * @param {string} text 
+ * @param {string | number} statusText 
+ * @param {boolean | undefined} isCritical 
+ */
 function reportStatus(key, text, statusText, isCritical = undefined) {
     var field = document.getElementById("status_" + key);
     if (field == null) {
@@ -27,7 +39,7 @@ function reportStatus(key, text, statusText, isCritical = undefined) {
             }
         }
     } else {
-        field.innerText = statusText;
+        field.innerText = `${statusText}`;
         if (isCritical != undefined) {
             switchClass(field, "success", !isCritical);
             switchClass(field, "error", isCritical);
@@ -36,15 +48,26 @@ function reportStatus(key, text, statusText, isCritical = undefined) {
 
     field = document.getElementById("bc_" + key);
     if (field != null) {
-        field.innerText = statusText;
+        field.innerText = `${statusText}`;
     }
 }
 
+/**
+ * 
+ * @param {string} text 
+ * @param {string} url 
+ */
 function addSidebarDownloadLink(text, url) {
     createElement("a", { parent: sidebar, text: text, download: 1, href: url, class: "button" });
 }
 
 
+/**
+ * 
+ * @param {string} text 
+ * @param {function} action 
+ * @returns 
+ */
 function addSidebarButton(text, action) {
     return createElement("div", { parent: sidebar, text: text, onclick: action, class: "button" });
 }

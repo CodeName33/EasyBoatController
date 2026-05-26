@@ -303,7 +303,7 @@ body {
     filter: brightness(0.6);
 }
 
-@media (hover: none) and (pointer: coarse),(hover: none) and (pointer: fine) {
+@media (pointer:none),(pointer:coarse) {
     body, input, textarea, th, td, div, button {
         font-size: 4vmin;
     }

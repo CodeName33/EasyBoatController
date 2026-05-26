@@ -1,4 +1,5 @@
 var autoCalibrationStep = 0;
+/** @type {HTMLElement | null} */
 var calibrationWindow = null;
 var calibrationActive = false;
 
@@ -28,9 +29,9 @@ function calibrationMoveRight() {
 }
 
 function calibrationUpdateCurrent() {
-    setInnerText("calibration_current", autoCalibrationStep == 0 ? boat.rudder.target : boat.rudder.pos + " / " + boat.rudder.target);
-    setInnerText("calibration_left", boat.rudder.min);
-    setInnerText("calibration_right", boat.rudder.max);
+    setInnerText("calibration_current", autoCalibrationStep == 0 ? `${boat.rudder.target}` : `${boat.rudder.pos} / ${boat.rudder.target}`);
+    setInnerText("calibration_left", `${boat.rudder.min}`);
+    setInnerText("calibration_right", `${boat.rudder.max}`);
 }
 
 function calibrationSetMaxLeft() {
@@ -46,9 +47,10 @@ function calibrationSetMaxRight() {
 }
 
 function calibrationMoveTo() {
+	//@ts-ignore
 	var value = parseInt(document.getElementById("calibrate_moveTo").value);
 	boat.rudder.target = value;
-	sendBluetoothData({ T: value });
+	sendBluetoothData({ T: value});
     calibrationUpdateCurrent();
 }
 
@@ -65,7 +67,7 @@ function calibrationAuto() {
     calibrationWindow.innerText = "Wait until calibration ended";
 
 	boat.rudder.pos = 0;
-	boat.rudder.target = settings.calibrate.maxSteps;
+	boat.rudder.target = settings.calibrate.maxSteps * (settings.calibrate.invertedCalibration ? -1 : 1);
 	sendBluetoothData({ Z: boat.rudder.pos, T: boat.rudder.target });
 	calibrationUpdateCurrent();
 	autoCalibrationStep = 1;
@@ -172,7 +174,7 @@ function continueAutoCalibtate() {
 	if (autoCalibrationStep == 1) {
 		if (boat.rudder.pos == boat.rudder.target) {
 			autoCalibrationStep = 2;
-			boat.rudder.target = settings.calibrate.autoCalibrationCenter;
+			boat.rudder.target = settings.calibrate.autoCalibrationCenter * (settings.calibrate.invertedCalibration ? -1 : 1);
 			sendBluetoothData({ T: boat.rudder.target });
 			boat.rudder.min = -settings.calibrate.defaultSideMax;
 			boat.rudder.max = settings.calibrate.defaultSideMax;
@@ -180,6 +182,7 @@ function continueAutoCalibtate() {
 	} else if (autoCalibrationStep == 2) {
 		if (boat.rudder.pos == boat.rudder.target) {
 			calibrationSetZero();
+			//@ts-ignore
             if (calibrationWindow != null && !calibrationWindow.windowClosed) {
                 closeModalWindow();
             }
@@ -195,6 +198,7 @@ function calibrationOnTime() {
             sendBluetoothData({ T: boat.rudder.target });
         }
 
+		//@ts-ignore
         if (calibrationWindow.windowClosed) {
             autoCalibrationStep = 0;
         } else {

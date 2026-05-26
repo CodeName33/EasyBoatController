@@ -1,3 +1,13 @@
+/**
+ * 
+ * @param {number} x1 
+ * @param {number} y1 
+ * @param {number} x2 
+ * @param {number} y2 
+ * @param {number} px 
+ * @param {number} py 
+ * @returns {number}
+ */
 function distancePointToLine(x1, y1, x2, y2, px, py) {
     // Calculate the numerator of the distance formula
     const numerator = ((x2 - x1) * (y1 - py) - (x1 - px) * (y2 - y1));
@@ -9,6 +19,12 @@ function distancePointToLine(x1, y1, x2, y2, px, py) {
     return numerator / denominator;
 }
 
+/**
+ * 
+ * @param {number} legA 
+ * @param {number} legB 
+ * @returns {{angleA: number, angleB: number}}
+ */
 function calculateAngles(legA, legB) {
     const angleARadians = Math.atan(legA / legB);
     const angleA = angleARadians * (180 / Math.PI); // Convert radians to degrees
@@ -19,6 +35,13 @@ function calculateAngles(legA, legB) {
     return { angleA: angleA, angleB: angleB };
 }
 
+/**
+ * 
+ * @param {number} hypotenuse 
+ * @param {number} angleA 
+ * @param {number} angleB 
+ * @returns {{legA: number, legB: number}}
+ */
 function calculateLegs(hypotenuse, angleA, angleB) {
     if (angleA + angleB !== 90) {
         throw new Error("The sum of the angles A and B must be 90 degrees for a right triangle.");
@@ -33,6 +56,12 @@ function calculateLegs(hypotenuse, angleA, angleB) {
     return { legA: legA, legB: legB };
 }
 
+/**
+ * 
+ * @param {number} a 
+ * @param {number} length 
+ * @returns {{x: number, y: number }}
+ */
 function angleToCoords(a, length) {
     if (a < 0) {
         a = (a + 360) % 360;
@@ -41,6 +70,7 @@ function angleToCoords(a, length) {
     var secondAngle = 90 - angle;
     var lengths = calculateLegs(length, angle, secondAngle);
     switch (Math.floor(a / 90)) {
+        default:
         case 0:
             return { x: lengths.legB, y: lengths.legA };
         case 1:
@@ -52,11 +82,19 @@ function angleToCoords(a, length) {
     }
 }
 
+/**
+ * 
+ * @param {number} x1 
+ * @param {number} y1 
+ * @param {number} x2 
+ * @param {number} y2 
+ * @returns {number}
+ */
 function coordsToAngle(x1, y1, x2, y2) {
     var legA = x1 - x2;
     var legB = y1 - y2;
     var angles = calculateAngles(legA, legB);
-    angle = Math.abs(angles.angleB);
+    var angle = Math.abs(angles.angleB);
     if (y2 < y1 && x2 >= x1) {
         angle = 270 - angles.angleA;
     } else if (y2 > y1 && x2 < x1) {
@@ -67,6 +105,12 @@ function coordsToAngle(x1, y1, x2, y2) {
     return angle;
 }
 
+/**
+ * 
+ * @param {number} a1 
+ * @param {number} a2 
+ * @returns 
+ */
 function compareAngles(a1, a2) {
 	var diff = a1 - a2;
 	if (diff > 180) {
@@ -77,8 +121,21 @@ function compareAngles(a1, a2) {
 	return diff;
 }
 
+/**
+ * 
+ * @param {number} lat1 
+ * @param {number} lon1 
+ * @param {number} lat2 
+ * @param {number} lon2 
+ * @returns {number}
+ */
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371000;
+    /**
+     * 
+     * @param {number} degrees 
+     * @returns 
+     */
     const toRadians = degrees => degrees * (Math.PI / 180);
 
     const dLat = toRadians(lat2 - lat1);
@@ -95,16 +152,34 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return distance;
 }
 
+/**
+ * 
+ * @param {number} radians 
+ * @returns {number}
+ */
 function radians_to_degrees(radians)
 {
   var pi = Math.PI;
   return radians * (180/pi);
 }
 
+/**
+ * 
+ * @param {number} degrees 
+ * @returns {number}
+ */
 function toRadians(degrees) {
     return degrees * (Math.PI / 180);
 }
 
+/**
+ * 
+ * @param {number} lat1 
+ * @param {number} lon1 
+ * @param {number} lat2 
+ * @param {number} lon2 
+ * @returns {number}
+ */
 function haversineDistance(lat1, lon1, lat2, lon2) {
     const R = 6371000; // Radius of the Earth in meters
     const dLat = toRadians(lat2 - lat1);
@@ -116,10 +191,26 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
     return R * c; // in meters
 }
 
+/**
+ * 
+ * @param {number} latP 
+ * @param {number} lonP 
+ * @param {number} latA 
+ * @param {number} lonA 
+ * @param {number} latB 
+ * @param {number} lonB 
+ * @returns {number}
+ */
 function calculateSignedDistanceToLine(latP, lonP, latA, lonA, latB, lonB) {
     const R = 6371000; // Radius of the Earth in meters
 
     // Convert to Cartesian coordinates for all points (P, A, B)
+    /**
+     * 
+     * @param {number} lat 
+     * @param {number} lon 
+     * @returns 
+     */
     const toCartesian = (lat, lon) => {
         const latRad = toRadians(lat);
         const lonRad = toRadians(lon);
@@ -164,20 +255,47 @@ function calculateSignedDistanceToLine(latP, lonP, latA, lonA, latB, lonB) {
     return distance * sign * -1;
 }
 
+/**
+ * 
+ * @param {number} value 
+ * @returns {string}
+ */
 function angleToHumanize(value) {
 	//return Math.floor(((180 - (value + 90) + 360) % 360)) + "°";
 	return Math.floor(((180 - (value + 90) + 360) % 360)) + "°";
 	//return Math.floor(value);
 }
 
+/**
+ * 
+ * @param {string | number} value 
+ * @returns {number}
+ */
 function humanAngle(value) {
-    value = parseInt(value);
+    value = parseInt(`${value}`);
     return Math.floor(((180 - (value + 90) + 360) % 360));
 }
 
-
+/**
+ * 
+ * @param {number} x1 
+ * @param {number} y1 
+ * @param {number} x2 
+ * @param {number} y2 
+ * @param {number} x3 
+ * @param {number} y3 
+ * @returns {{angleA: number, angleB: number, angleC: number}}
+ */
 function calculateTriangleAngles(x1, y1, x2, y2, x3, y3) {
     // Calculate the lengths of the sides using the distance formula
+    /**
+     * 
+     * @param {number} x1 
+     * @param {number} y1 
+     * @param {number} x2 
+     * @param {number} y2 
+     * @returns {number}
+     */
     function distance(x1, y1, x2, y2) {
         return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
     }
@@ -187,6 +305,13 @@ function calculateTriangleAngles(x1, y1, x2, y2, x3, y3) {
     const c = distance(x1, y1, x2, y2); // Length of side opposite to vertex C
 
     // Using the Law of Cosines to find the angles
+    /**
+     * 
+     * @param {number} opposite 
+     * @param {number} side1 
+     * @param {number} side2 
+     * @returns {number}
+     */
     function calculateAngle(opposite, side1, side2) {
         return Math.acos((side1**2 + side2**2 - opposite**2) / (2 * side1 * side2)) * (180 / Math.PI);
     }

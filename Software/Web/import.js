@@ -7,10 +7,15 @@ function importRouteDialog() {
 	if (input == null) {
     	input = createElement("input", { parent: document.body, id: "import_route", style: "display:none", type: "file", onchange: onImportSelected });
 	}
+	//@ts-ignore
     input.click();
     
 }
 
+/**
+ * 
+ * @param {*} e 
+ */
 function onImportSelected(e) {
     var input = e.currentTarget;
     //document.getElementById("debug").innerText = prop_dump(input.files);
@@ -22,7 +27,7 @@ function onImportSelected(e) {
             var reader = new FileReader();
             reader.onload = onImportReaded;
             reader.onerror = function() {
-                showFatalError("Can't read file");
+                showFatalError("Error", "Can't read file");
             };
             reader.readAsArrayBuffer(file);
             //document.getElementById("debug").innerText = prop_dump(file);
@@ -37,6 +42,10 @@ function newRoute() {
 	};
 }
 
+/**
+ * 
+ * @param {string} fileData 
+ */
 function importGPX(fileData) {
 	const parser = new DOMParser();
 	var doc = parser.parseFromString(fileData, "application/xml");
@@ -49,16 +58,16 @@ function importGPX(fileData) {
 	}
 	var rtepts = doc.querySelectorAll("rtept");
 	for (let rtept of rtepts) {
-		var point = { x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) };
+		var point = { x: parseFloat(rtept.getAttribute("lon") || "0"), y: parseFloat(rtept.getAttribute("lat") || "0") };
 		if (route.points.length == 0 || route.points[route.points.length - 1].x != point.x || route.points[route.points.length - 1].y != point.y)
 		{
 			route.points.push(point);
 		}
 	}
 
-	trkpts = doc.querySelectorAll("trkpt");
+	var trkpts = doc.querySelectorAll("trkpt");
 	for (let rtept of trkpts) {
-		var point = { x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) };
+		var point = { x: parseFloat(rtept.getAttribute("lon") || "0"), y: parseFloat(rtept.getAttribute("lat") || "0") };
 		if (route.points.length == 0 || route.points[route.points.length - 1].x != point.x || route.points[route.points.length - 1].y != point.y)
 		{
 			route.points.push(point);
@@ -68,6 +77,10 @@ function importGPX(fileData) {
 	finishImport();
 }
 
+/**
+ * 
+ * @param {string} fileData 
+ */
 function importGPXDebug(fileData) {
 	const parser = new DOMParser();
 	var doc = parser.parseFromString(fileData, "application/xml");
@@ -80,7 +93,7 @@ function importGPXDebug(fileData) {
 	}
 	var rtepts = doc.querySelectorAll("rtept");
 	for (let rtept of rtepts) {
-		var point = { x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) };
+		var point = { x: parseFloat(rtept.getAttribute("lon") || "0"), y: parseFloat(rtept.getAttribute("lat") || "0") };
 		if (route.points.length == 0 || route.points[route.points.length - 1].x != point.x || route.points[route.points.length - 1].y != point.y)
 		{
 			route.points.push(point);
@@ -89,14 +102,14 @@ function importGPXDebug(fileData) {
 
 	var points = [];
 	debugCollectedRoute = [];
-	trkpt = doc.querySelectorAll("trkpt");
+	var trkpt = doc.querySelectorAll("trkpt");
 	for (let rtept of trkpt) {
-		var point = { x: parseFloat(rtept.getAttribute("lon")), y: parseFloat(rtept.getAttribute("lat")) };
+		var point = { x: parseFloat(rtept.getAttribute("lon") || "0"), y: parseFloat(rtept.getAttribute("lat") || "0") };
 		debugCollectedRoute.push({
-			latitude: parseFloat(rtept.getAttribute("lat")),
-			longitude: parseFloat(rtept.getAttribute("lon")),
-			compass: parseFloat(rtept.getAttribute("cmp")),
-			time: parseInt(rtept.getAttribute("tm")),
+			latitude: parseFloat(rtept.getAttribute("lat") || "0"),
+			longitude: parseFloat(rtept.getAttribute("lon") || "0"),
+			compass: parseFloat(rtept.getAttribute("cmp") || "0"),
+			time: parseInt(rtept.getAttribute("tm") || "0"),
 		});
 		if (points.length == 0 || points[points.length - 1].x != point.x || points[points.length - 1].y != point.y)
 		{
@@ -125,6 +138,10 @@ function importGPXDebug(fileData) {
 	finishImport();
 }
 
+/**
+ * 
+ * @param {string} fileData 
+ */
 function importKML(fileData) {
 	const parser = new DOMParser();
 	var doc = parser.parseFromString(fileData, "application/xml");
@@ -152,10 +169,14 @@ function finishImport() {
 		scrollToRoute();
 		updateImportInfo();
 	} else {
-		showFatalError("No route points found");
+		showFatalError("Error", "No route points found");
 	}
 }
 
+/**
+ * 
+ * @param {ProgressEvent<FileReader>} e 
+ */
 function onImportReaded(e) {
 	/*
     if (importType == "kmz") {
@@ -172,31 +193,41 @@ function onImportReaded(e) {
     } else*/
 	  if (importType == "kml") {
 		var dec = new TextDecoder("utf-8");
+		//@ts-ignore
 		importKML(dec.decode(e.target.result));
 	} else if (importType == "gpx") {
 		var dec = new TextDecoder("utf-8");
+		//@ts-ignore
 		importGPX(dec.decode(e.target.result));
 	} else if (importType == "xml") {
 		var dec = new TextDecoder("utf-8");
+		//@ts-ignore
 		importGPXDebug(dec.decode(e.target.result));
 	}else {
-		showFatalError("Format '" + importType + "' not supported. Use KML or GPX files");
+		showFatalError("Error", "Format '" + importType + "' not supported. Use KML or GPX files");
 	}
 }
 
 function updateImportInfo() {
 	if (route.points.length > 0) {
+		//@ts-ignore
 		document.getElementById("route_name").innerText = route.name;
+		//@ts-ignore
 		document.getElementById("route_points").innerText = route.points.length;
+		//@ts-ignore
 		document.getElementById("route_length").innerText = Math.floor(getRouteDistance(route)) + "m";
 	} else {
+		//@ts-ignore
 		document.getElementById("route_name").innerText = route.name;
+		//@ts-ignore
 		document.getElementById("route_points").innerText = "N/A";
+		//@ts-ignore
 		document.getElementById("route_length").innerText = "N/A";
 	}
 }
 
 function saveRoute() {
+	//@ts-ignore
 	route.name = document.getElementById("save_route_name").value;
 	var routes = storageGetObject("routes");
 	if (route.name in routes) {
@@ -228,7 +259,12 @@ function saveRouteDialog() {
 	}
 }
 
+/**
+ * 
+ * @param {MouseEvent} e 
+ */
 function deleteRoute(e) {
+	//@ts-ignore
 	route = e.currentTarget.object;
 
 	askQuestion("Delete", "Delete route with name '" + route.name + "'?",  () => {
@@ -251,7 +287,12 @@ function removeFirstPoint() {
 	}
 }
 
+/**
+ * 
+ * @param {MouseEvent} e 
+ */
 function loadRoute(e) {
+	//@ts-ignore
 	route = e.currentTarget.object;
 	scrollToRoute();
 	updateImportInfo();
